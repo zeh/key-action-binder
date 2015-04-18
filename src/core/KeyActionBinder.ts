@@ -1,4 +1,5 @@
 /// <reference path="./../libs/signals/SimpleSignal.ts" />
+/// <reference path="./../definitions/gamepad.d.ts" />
 
 /**
  * Provides universal input control for game controllers and keyboard
