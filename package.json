@@ -1,0 +1,19 @@
+{
+  "name": "key-action-binder.ts",
+  "version": "1.0.0",
+  "description": "Key-Action-Binder",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zeh/key-action-binder.ts.git"
+  },
+  "author": "Zeh Fernando",
+  "homepage": "https://github.com/zeh/key-action-binder.ts",
+  "devDependencies": {
+    "del": "^1.1.1",
+    "gulp": "^3.8.11",
+    "gulp-concat": "^2.5.2",
+    "gulp-sourcemaps": "^1.5.1",
+    "gulp-typescript": "^2.6.0",
+    "gulp-uglify": "^1.1.0"
+  }
+}

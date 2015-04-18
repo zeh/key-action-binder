@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title></title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<!-- Own styles -->
+		<style type="text/css">
+			body, document {
+				padding: 0;
+				margin: 0;
+				font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+				font-size: 16px;
+				overflow: hidden;
+			}
+			#videoContainer {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+		
+		<!-- Key-Action-Binder library -->
+		<script src="../build/key-action-binder.js"></script>
+
+		<script>
+			/**
+			 * Gets a query string parameter, to make it more dynamic
+			 **/
+			window.getQueryParameter = function(__name) {
+				__name = __name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+				var regexS = "[\\?&]" + __name + "=([^&#]*)";
+				var regex = new RegExp(regexS);
+				var results = regex.exec(window.location.search);
+				return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+			};
+
+			/**
+			 * Initialize everything
+			 **/
+			window.init = function(e) {
+				console.log("OK");
+				
+				// Create instance
+				binder = new KeyActionBinder();
+
+				// Setup as many action bindings as you want
+				binder.addKeyboardActionBinding("move-left", Keyboard.LEFT);
+				binder.addKeyboardActionBinding("move-right", Keyboard.RIGHT);
+				binder.addGamepadActionBinding("move-left", GamepadControls.DPAD_LEFT);
+				binder.addGamepadActionBinding("move-right", GamepadControls.DPAD_RIGHT);
+
+				/*
+				function function gameLoop():void {
+					// Evaluate actions
+					if (binder.isActionActivated("move-left")) {
+						// ...
+					} else if (binder.isActionActivated("move-right")) {
+						// ...
+					}
+				}
+				*/
+			};
+
+			/**
+			 * Start
+			 **/
+			window.addEventListener("load", window.init);
+
+		</script>
+
+	</head>
+	<body>
+		<div id="messages">OK</div>
+	</body>
+</html>
