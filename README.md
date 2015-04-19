@@ -27,14 +27,25 @@ Notice: this is still under development. It is based on my original [KeyActionBi
 	binder.action("move-right").addKeyboardBinding(KeyActionBinder.KeyCodes.RIGHT);
 	binder.action("move-left").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.DPAD_LEFT);
 	binder.action("move-right").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.DPAD_RIGHT);
+	
+	binder.action("jump").addKeyboardBinding(KeyActionBinder.KeyCodes.SPACE);
+	binder.action("jump").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_DOWN);
 
 	// Evaluate actions in the game loop
 	function myGameLoop() {
 		// Check whether the player should move
 		if (binder.action("move-left").activated) {
-			// ...
+			// Move left...
 		} else if (binder.action("move-right").activated) {
-			// ...
+			// Move right...
+		}
+		
+		// Check whether an action should be performed
+		if (binder.action("jump").activated) {
+			// Perform jump...
+
+			// Consume the action, so the player has to press jump again to perform another jump
+			binder.action("jump").consume();
 		}
 	}
 
@@ -57,12 +68,10 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 
  * Interpret gamepad axes
  * Proper documentation
- * Better naming for gamepad buttons
- * Allow detecting "any" gamepad key (for "press any key")
+ * Allow detecting "any" gamepad/keyboard key (for "press any key")
  * Allow complex sequence bindings (hadouken, etc)
  * Allow timed events (for jump etc)
- * Test consume()
- * Profile and test performance/bottlenecks/memory allocations
+ * More profiling and testing performance/bottlenecks/memory allocations (http://www.html5rocks.com/en/tutorials/webperformance/usertiming/)
  * Better demos
  * Test support for 2+ controllers
- * Automated tests/profiling (http://www.html5rocks.com/en/tutorials/webperformance/usertiming/)
+ * Automated tests
