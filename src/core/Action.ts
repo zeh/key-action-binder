@@ -15,6 +15,7 @@ module KAB {
 		private _gamepadBindings:Array<GamepadBinding>;
 
 		private _activated:boolean;
+		private _consumed:boolean;
 		private _value:number;
 
 
@@ -29,6 +30,7 @@ module KAB {
 			this._gamepadBindings = new Array<GamepadBinding>();
 
 			this._activated = false;
+			this._consumed = false;
 			this._value = 0;
 		}
 
@@ -42,23 +44,21 @@ module KAB {
 		}
 
 		public addGamepadBinding():void {
-			console.error("Action.addKeyboardBinding() not implemented yet");
+			console.error("Action.addGamepadBinding() not implemented yet");
 		}
 
 		public consume():void {
-			console.error("Action.consume() not implemented yet");
+			if (this._activated) this._consumed = true;
 		}
 
 		public interpretKeyDown(keyCode:number, keyLocation:number):void {
-			var isActivated:boolean = false;
 			for (var i:number = 0; i < this._keyboardBindings.length; i++) {
 				if (!this._keyboardBindings[i].isActivated && this._keyboardBindings[i].matchesKeyboardKey(keyCode, keyLocation)) {
 					// Activated
 					this._keyboardBindings[i].isActivated = true;
+					this._activated = true;
 				}
-				isActivated = isActivated || this._keyboardBindings[i].isActivated;
 			}
-			this._activated = isActivated;
 			this._value = this._activated ? 1 : 0;
 		}
 
@@ -71,8 +71,10 @@ module KAB {
 				}
 				isActivated = isActivated || this._keyboardBindings[i].isActivated;
 			}
+			// TODO: also check gamepads for activation
 			this._activated = isActivated;
 			this._value = this._activated ? 1 : 0;
+			if (this._activated) this._consumed = false; // TODO: make this more self-contained
 		}
 
 
@@ -84,7 +86,7 @@ module KAB {
 		}
 
 		public get activated():boolean {
-			return this._activated;
+			return this._activated && !this._consumed;
 		}
 
 		public get value():number {
