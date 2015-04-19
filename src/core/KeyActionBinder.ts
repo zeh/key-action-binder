@@ -110,8 +110,8 @@ class KeyActionBinder {
 		UP: 38,
 		V: 86,
 		W: 87,
-		WINDOW_LEFT: 91,
-		WINDOW_RIGHT: 92,
+		WINDOWS_LEFT: 91,
+		WINDOWS_RIGHT: 92,
 		X: 88,
 		Y: 89,
 		Z: 90
@@ -131,37 +131,35 @@ class KeyActionBinder {
 
 	public static GamepadButtons = {
 		ANY: 81653815,
-		FACE_1: 0, // Face (main) buttons
-		FACE_2: 1,
-		FACE_3: 2,
-		FACE_4: 3,
-		LEFT_SHOULDER: 4, // Top shoulder buttons
+		ACTION_DOWN: 0,
+		ACTION_RIGHT: 1,
+		ACTION_LEFT: 2,
+		ACTION_UP: 3,
+		LEFT_SHOULDER: 4, // Left shoulder button
 		RIGHT_SHOULDER: 5,
-		LEFT_SHOULDER_BOTTOM: 6, // Bottom shoulder buttons
+		LEFT_SHOULDER_BOTTOM: 6, // Left Trigger
 		RIGHT_SHOULDER_BOTTOM: 7,
 		SELECT: 8,
 		START: 9,
-		LEFT_ANALOGUE_STICK: 10, // Analogue sticks (if depressible)
-		RIGHT_ANALOGUE_STICK: 11,
-		PAD_TOP: 12, // Directional (discrete) pad
-		PAD_BOTTOM: 13,
-		PAD_LEFT: 14,
-		PAD_RIGHT: 15
+		STICK_LEFT_PRESS: 10,
+		STICK_RIGHT_PRESS: 11,
+		DPAD_UP: 12,
+		DPAD_DOWN: 13,
+		DPAD_LEFT: 14,
+		DPAD_RIGHT: 15
 	};
 
 	public static GamepadAxes = {
-		LEFT_ANALOGUE_HOR: 0,
-		LEFT_ANALOGUE_VERT: 1,
-		RIGHT_ANALOGUE_HOR: 2,
-		RIGHT_ANALOGUE_VERT: 3
+		STICK_LEFT_X: 0,
+		STICK_LEFT_Y: 1,
+		STICK_RIGHT_X: 2,
+		STICK_RIGHT_Y: 3
 	}
-
-	//public static const KEYBOARD_DEVICE:GameInputDevice = null;		// Set to null by default, since gamepads are non-null (and you can't create/subclass a GameInputDevice)
 
 	// Properties
 	private _isRunning:boolean;
 	private _maintainPlayerPositions:boolean;														// Whether it tries to keep player positions or not
-	private _recentDevice:Gamepad;																	// The most recent device that sent an event
+	private _recentDevice:Gamepad;																	// The most recent device that sent an event // TODO: properly use this, duh
 
 	// Instances
 	private actions:{ [index:string]:KAB.Action };													// All added actions, as a dictionary
@@ -193,10 +191,6 @@ class KeyActionBinder {
 		this._onActionValueChanged = new zehfernando.signals.SimpleSignal<(action: string, value: number) => void>();
 		this._onDevicesChanged = new zehfernando.signals.SimpleSignal<() => void>();
 		this._onRecentDeviceChanged = new zehfernando.signals.SimpleSignal<(gamepad: Gamepad) => void>();
-
-		//gameInputDevices = new Vector.<GameInputDevice>();
-		//gameInputDeviceIds = new Vector.<String>();
-		//gameInputDeviceDefinitions = new Vector.<AutoGamepadInfo>();
 
 		this.start();
 	}
@@ -376,7 +370,8 @@ class KeyActionBinder {
 	}
 
 	/**
-	 * Utility function: creates a function bound to "this". This is needed because the same reference needs to be used when removing listeners.
+	 * Utility function: creates a function bound to "this".
+	 * This needs to be stored because the same reference needs to be used when removing listeners.
 	 */
 	private getBoundFunction(func:any): EventListener {
 		if (!this.bindCache.hasOwnProperty(func)) {

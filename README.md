@@ -25,8 +25,8 @@ Notice: this is still under development. It is based on my original [KeyActionBi
 	// Setup as many action bindings as you want
 	binder.action("move-left").addKeyboardBinding(KeyActionBinder.KeyCodes.LEFT);
 	binder.action("move-right").addKeyboardBinding(KeyActionBinder.KeyCodes.RIGHT);
-	binder.action("move-left").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.PAD_LEFT);
-	binder.action("move-right").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.PAD_RIGHT);
+	binder.action("move-left").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.DPAD_LEFT);
+	binder.action("move-right").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.DPAD_RIGHT);
 
 	// Evaluate actions in the game loop
 	function gameLoop() {
