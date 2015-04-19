@@ -1,6 +1,9 @@
-/// <reference path="BindingInfo.ts" />
-/// <reference path="./../libs/signals/SimpleSignal.ts" />
 /// <reference path="./../definitions/gamepad.d.ts" />
+/// <reference path="./../libs/signals/SimpleSignal.ts" />
+/// <reference path="ActivationInfo.ts" />
+/// <reference path="BindingInfo.ts" />
+/// <reference path="KeyboardBinding.ts" />
+/// <reference path="GamepadBinding.ts" />
 
 /**
  * Provides universal input control for game controllers and keyboard
@@ -26,6 +29,7 @@ class KeyActionBinder {
 
 	// Instances
 	private bindings:Array<KAB.BindingInfo>;														// Actual existing bindings, their action, and whether they're activated or not
+	private actionsActivations:{ [index:string]:KAB.ActivationInfo };
 
 	private _onActionActivated:zehfernando.signals.SimpleSignal<(action: string) => void>;
 	private _onActionDeactivated:zehfernando.signals.SimpleSignal<(action: string) => void>;
@@ -51,7 +55,7 @@ class KeyActionBinder {
 		this._isRunning = false;
 		this._maintainPlayerPositions = false;
 		this.bindings = new Array<KAB.BindingInfo>();
-		//actionsActivations = {}; // TODO
+		this.actionsActivations = {};
 
 		this._onActionActivated = new zehfernando.signals.SimpleSignal<(action: string) => void>();
 		this._onActionDeactivated = new zehfernando.signals.SimpleSignal<(action: string) => void>();
@@ -287,6 +291,33 @@ class KeyActionBinder {
 
 		this.consumeAction(action);
 	}
+
+	/**
+	 * Consumes an action, causing all current activations and values attached to it to be reset. This is
+	 * the same as simulating the player releasing the button that activates an action. It is useful to
+	 * force players to re-activate some actions, such as a jump action (otherwise keeping the jump button
+	 * pressed would allow the player to jump nonstop).
+	 *
+	 * @param action		The id of the action you want to consume.
+	 *
+	 * <p>Examples:</p>
+	 *
+	 * <pre>
+	 * // On jump, consume the jump
+	 * if (isTouchingSurface && myBinder.isActionActivated("jump")) {
+	 *     myBinder.consumeAction("jump");
+	 *     player.performJump();
+	 * }
+	 * </pre>
+	 *
+	 * @see GamepadControls
+	 * @see #isActionActivated()
+	 */
+	public consumeAction(action:string):void {
+		// Deactivates all current actions of an action (forcing a button to be pressed again)
+		if (this.actionsActivations.hasOwnProperty(action)) this.actionsActivations[action].resetActivations();
+	}
+
 
 	/**
 	 * Update the known state of all buttons/axis
