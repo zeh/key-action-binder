@@ -32,7 +32,7 @@ Notice: this is still under development. It is based on my original [KeyActionBi
 	binder.action("jump")
 		.bindKeyboard(KeyActionBinder.KeyCodes.SPACE)
 		.bindGamepad(KeyActionBinder.GamepadButtons.ACTION_DOWN)
-		.setTolerance(0.3); // Set the tolerance for an action; to prevent a player from hitting the jump button while still in the air, for example
+		.setTolerance(0.05); // Set the tolerance for an action to 0.05s; to prevent a player from hitting the jump button while still in the air, for example
 
 	// Evaluate actions in the game loop
 	function myGameLoop() {

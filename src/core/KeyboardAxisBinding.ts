@@ -33,7 +33,7 @@ module KAB {
 
 			this.transitionTime = transitionTimeSeconds * 1000;
 
-			this.timeLastChange = 0;
+			this.timeLastChange = NaN;
 			this.targetValue = this.previousValue = 0;
 		}
 
@@ -55,14 +55,17 @@ module KAB {
 
 		public get value():number {
 			// TODO: this is linear.. add some easing?
-			return Utils.map(Date.now(), this.timeLastChange, this.timeLastChange + this.currentTransitionTime, this.previousValue, this.targetValue);
+			if (isNaN(this.timeLastChange)) return this.targetValue;
+			return Utils.map(Date.now(), this.timeLastChange, this.timeLastChange + this.currentTransitionTime, this.previousValue, this.targetValue, true);
 		}
 
 		public set value(newValue:number) {
-			this.previousValue = this.value;
-			this.targetValue = newValue;
-			this.currentTransitionTime = Utils.map(Math.abs(this.targetValue - this.previousValue), 0, 1, 0, this.transitionTime);
-			this.timeLastChange = Date.now();
+			if (newValue != this.targetValue) {
+				this.previousValue = this.value;
+				this.targetValue = newValue;
+				this.currentTransitionTime = Utils.map(Math.abs(this.targetValue - this.previousValue), 0, 1, 0, this.transitionTime);
+				this.timeLastChange = Date.now();
+			}
 		}
 	}
 }

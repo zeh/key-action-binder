@@ -48,7 +48,7 @@
 				binder.action("move-right").bindKeyboard(KeyActionBinder.KeyCodes.RIGHT);
 				
 				binder.action("jump")
-					.setTolerance(0.3)
+					.setTolerance(0.05)
 					.bindKeyboard(KeyActionBinder.KeyCodes.SPACE)
 					.bindGamepad(KeyActionBinder.GamepadButtons.ACTION_DOWN);
 
@@ -74,7 +74,7 @@
 					txt += "au = " + binder.action("au").activated + ", " + binder.action("au").value + "<br>"
 					txt += "al = " + binder.action("al").activated + ", " + binder.action("al").value + "<br>"
 					txt += "ar = " + binder.action("ar").activated + ", " + binder.action("ar").value + "<br>"
-					txt += "axis x = " + binder.axis("ar").value + "<br>"
+					txt += "axis x = " + binder.axis("x").value + "<br>"
 					
 					if (binder.action("jump").activated) {
 						//binder.action("jump").consume();

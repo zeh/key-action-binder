@@ -32,9 +32,9 @@ module KAB {
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-		public bindKeyboard(keyCodeA:number, keyCodeB:number, keyLocationA:number = KeyActionBinder.KeyLocations.ANY, keyLocationB:number = KeyActionBinder.KeyLocations.ANY, transitionTimeSeconds:number = 0.5):Axis {
+		public bindKeyboard(keyCodeA:number, keyCodeB:number, keyLocationA:number = KeyActionBinder.KeyLocations.ANY, keyLocationB:number = KeyActionBinder.KeyLocations.ANY, transitionTimeSeconds:number = 0.15):Axis {
 			// TODO: check if already present?
-			this.keyboardBindings.push(new KeyboardAxisBinding(keyCodeA, keyLocationA, keyCodeB, keyLocationB, transitionTimeSeconds));
+			this.keyboardBindings.push(new KeyboardAxisBinding(keyCodeA, keyCodeB, keyLocationA, keyLocationB, transitionTimeSeconds));
 			return this;
 		}
 
