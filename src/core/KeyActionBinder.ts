@@ -1,3 +1,4 @@
+/// <reference path="BindingInfo.ts" />
 /// <reference path="./../libs/signals/SimpleSignal.ts" />
 /// <reference path="./../definitions/gamepad.d.ts" />
 
@@ -9,13 +10,22 @@
  */
 class KeyActionBinder {
 
+	// Constants
+	public static VERSION:String = "0.0.0";
+
+	//public static const KEYBOARD_DEVICE:GameInputDevice = null;		// Set to null by default, since gamepads are non-null (and you can't create/subclass a GameInputDevice)
+
+	public static GAMEPAD_INDEX_ANY:number = 81653811;
+	public static KEY_CODE_ANY:string = "any";
+	public static KEY_LOCATION_ANY:number = 81653813;
+
 	// Properties
 	private _isRunning:boolean;
 	private _maintainPlayerPositions:boolean;														// Whether it tries to keep player positions or not
 	private _recentDevice:Gamepad;																	// The most recent device that sent an event
 
 	// Instances
-	private bindings:Array<BindingInfo>;															// Actual existing bindings, their action, and whether they're activated or not
+	private bindings:Array<KAB.BindingInfo>;														// Actual existing bindings, their action, and whether they're activated or not
 
 	private _onActionActivated:zehfernando.signals.SimpleSignal<(action: string) => void>;
 	private _onActionDeactivated:zehfernando.signals.SimpleSignal<(action: string) => void>;
@@ -40,7 +50,7 @@ class KeyActionBinder {
 
 		this._isRunning = false;
 		this._maintainPlayerPositions = false;
-		this.bindings = new Array<BindingInfo>();
+		this.bindings = new Array<KAB.BindingInfo>();
 		//actionsActivations = {}; // TODO
 
 		this._onActionActivated = new zehfernando.signals.SimpleSignal<(action: string) => void>();
@@ -119,6 +129,163 @@ class KeyActionBinder {
 
 			this._isRunning = false;
 		}
+	}
+
+	/**
+	 * Adds an action bound to a keyboard key. When a key with the given <code>keyCode</code> is pressed, the
+	 * desired action is activated. Optionally, keys can be restricted to a specific <code>keyLocation</code>.
+	 *
+	 * @param action		An arbitrary String id identifying the action that should be dispatched once this
+	 *						key combination is detected.
+	 * @param keyCode		The code of a key, as expressed in AS3's Keyboard constants.
+	 * @param keyLocation	The code of a key's location, as expressed in AS3's KeyLocation constants. If the
+	 *						default value is passed, the key location is never taken into
+	 *						consideration when detecting whether the passed action should be fired.
+	 *
+	 * <p>Examples:</p>
+	 *
+	 * <pre>
+	 * // Left arrow key to move left
+	 * myBinder.addKeyboardActionBinding("move-left", Keyboard.LEFT);
+	 *
+	 * // SPACE key to jump
+	 * myBinder.addKeyboardActionBinding("jump", Keyboard.SPACE);
+	 *
+	 * // Any SHIFT key to shoot
+	 * myBinder.addKeyboardActionBinding("shoot", Keyboard.SHIFT);
+	 *
+	 * // Left SHIFT key to boost
+	 * myBinder.addKeyboardActionBinding("boost", Keyboard.SHIFT, KeyLocation.LEFT);
+	 * </pre>
+	 *
+	 * @see flash.ui.Keyboard
+	 * @see #isActionActivated()
+	 * @see #removeKeyboardActionBinding()
+	 */
+	public addKeyboardActionBinding(action:string, keyCode:string = KeyActionBinder.KEY_CODE_ANY, keyLocation:number = KeyActionBinder.KEY_LOCATION_ANY):void {
+		// Create a binding to be verified later
+		this.bindings.push(new KAB.BindingInfo(action, new KAB.KeyboardBinding(keyCode, keyLocation)));
+		this.prepareAction(action);
+	}
+
+	/**
+	 * Removes an action bound to a keyboard key.
+	 *
+	 * @param action		An arbitrary String id identifying the action that should be dispatched once this
+	 *						key combination is detected.
+	 * @param keyCode		The code of a key, as expressed in AS3's Keyboard constants.
+	 * @param keyLocation	The code of a key's location, as expressed in AS3's KeyLocation constants. If the
+	 *						default value is passed, the key location is never taken into
+	 *						consideration when detecting whether the passed action should be fired.
+	 *
+	 * @see flash.ui.Keyboard
+	 * @see #addGamepadActionBinding()
+	 */
+	public removeKeyboardActionBinding(action:string, keyCode:string = KeyActionBinder.KEY_CODE_ANY, keyLocation:number = KeyActionBinder.KEY_LOCATION_ANY):void {
+		var bindingsToRemove:Array<KAB.BindingInfo> = new Array<KAB.BindingInfo>();
+
+		this.bindings.forEach(function (bindingInfo, i) {
+			if (bindingInfo.action == action) {
+				var keyboardBinding:KAB.KeyboardBinding = <KAB.KeyboardBinding>bindingInfo.binding;
+				if (keyboardBinding != null && keyboardBinding.keyCode == keyCode && keyboardBinding.keyLocation == keyLocation) {
+					// Store the binding to remove later, and fake a deactivate event
+					bindingsToRemove[bindingsToRemove.length] = bindingInfo;
+					//this.onKeyUp(new KeyboardEvent(KeyboardEvent.KEY_UP, true, false, 0, __keyCode, __keyLocation));
+					// TODO: properly inject this
+				}
+			}
+		});
+
+		bindingsToRemove.forEach(function (bindingInfo, i) {
+			this.bindings.splice(this.bindings.indexOf(bindingInfo), 1);
+		});
+
+		this.consumeAction(action);
+	}
+
+	/**
+	 * Adds an action bound to a game controller button, trigger, or axis. When a control of id
+	 * <code>controlId</code> is pressed, the desired action can be activated, and its value changes.
+	 * Optionally, keys can be restricted to a specific game controller location.
+	 *
+	 * @param action		An arbitrary String id identifying the action that should be dispatched once this
+	 *						input combination is detected.
+	 * @param controlId		The id code of a GameInput control, as an String. Use one of the constants from
+	 *						<code>GamepadControls</code>.
+	 * @param gamepadIndex	The int of the gamepad that you want to restrict this action to. Use 0 for the
+	 *						first gamepad (player 1), 1 for the second one, and so on. If the default value
+	 *						is passed, the gamepad index is never taken into consideration when detecting
+	 *						whether the passed action should be fired.
+	 *
+	 * <p>Examples:</p>
+	 *
+	 * <pre>
+	 * // Direction pad left to move left
+	 * myBinder.addGamepadActionBinding("move-left", GamepadControls.DPAD_LEFT);
+	 *
+	 * // Action button "down" (O in the OUYA, Cross in the PS3, A in the XBox 360) to jump
+	 * myBinder.addGamepadActionBinding("jump", GamepadControls.ACTION_DOWN);
+	 *
+	 * // L1/LB to shoot, on any controller
+	 * myBinder.addGamepadActionBinding("shoot", GamepadControls.LB);
+	 *
+	 * // L1/LB to shoot, on the first controller only
+	 * myBinder.addGamepadActionBinding("shoot-player-1", GamepadControls.LB, 0);
+	 *
+	 * // L2/LT to shoot, regardless of whether it is sensitive or not
+	 * myBinder.addGamepadActionBinding("shoot", GamepadControls.LT);
+	 *
+	 * // L2/LT to accelerate, depending on how much it is pressed (if supported)
+	 * myBinder.addGamepadActionBinding("accelerate", GamepadControls.LT);
+	.*
+	 * // Direction pad left to move left or right
+	 * myBinder.addGamepadActionBinding("move-sides", GamepadControls.STICK_LEFT_X);
+	 * </pre>
+	 *
+	 * @see GamepadControls
+	 * @see #isActionActivated()
+	 * @see #getActionValue()
+	 * @see #removeGamepadActionBinding()
+	 */
+	public addGamepadActionBinding(action:string, controlId:string, gamepadIndex:number = KeyActionBinder.GAMEPAD_INDEX_ANY):void {
+		// Create a binding to be verified later
+		this.bindings.push(new KAB.BindingInfo(action, new KAB.GamepadBinding(controlId, gamepadIndex)));
+		this.prepareAction(action);
+	}
+
+	/**
+	 * Removes an action bound to a game controller button, trigger, or axis.
+	 *
+	 * @param action		An arbitrary String id identifying the action that should be no longer bound.
+	 * @param controlId		The id code of a GameInput control, as an String. Use one of the constants from
+	 *						<code>GamepadControls</code>.
+	 * @param gamepadIndex	The int of the gamepad that you want to restrict this action to. Use 0 for the
+	 *						first gamepad (player 1), 1 for the second one, and so on. If the default value
+	 *						is passed, the gamepad index is never taken into consideration when detecting
+	 *						whether the passed action should be fired.
+	 *
+	 * @see GamepadControls
+	 * @see #addGamepadActionBinding()
+	 */
+	public removeGamepadActionBinding(action:string, controlId:string, __gamepadIndex:number = KeyActionBinder.GAMEPAD_INDEX_ANY):void {
+		var bindingsToRemove:Array<KAB.BindingInfo> = new Array<KAB.BindingInfo>();
+		this.bindings.forEach(function (bindingInfo, i) {
+			if (bindingInfo.action == action) {
+				var gamepadBinding:KAB.GamepadBinding = <KAB.GamepadBinding>bindingInfo.binding;
+				if (gamepadBinding != null && gamepadBinding.controlId == controlId && gamepadBinding.gamepadIndex == gamepadIndex) {
+					// Store the binding to remove later, and fake a deactivate event
+					bindingsToRemove[bindingsToRemove.length] = bindingInfo;
+					//interpretGameInputControlChanges(gamepadBinding.controlId, 0, 0, 1, 0);
+					// TODO: properly inject this
+				}
+			}
+		});
+
+		bindingsToRemove.forEach(function (bindingInfo, i) {
+			this.bindings.splice(this.bindings.indexOf(bindingInfo), 1);
+		});
+
+		this.consumeAction(action);
 	}
 
 	/**

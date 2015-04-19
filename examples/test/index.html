@@ -44,12 +44,19 @@
 				
 				// Create instance
 				binder = new KeyActionBinder();
+				
+				window.readGamepad = function() {
+					binder.update();
+					requestAnimationFrame(window.readGamepad);
+				};
+				
+				window.readGamepad();
 
 				// Setup as many action bindings as you want
-				binder.addKeyboardActionBinding("move-left", Keyboard.LEFT);
-				binder.addKeyboardActionBinding("move-right", Keyboard.RIGHT);
-				binder.addGamepadActionBinding("move-left", GamepadControls.DPAD_LEFT);
-				binder.addGamepadActionBinding("move-right", GamepadControls.DPAD_RIGHT);
+				//binder.addKeyboardActionBinding("move-left", Keyboard.LEFT);
+				//binder.addKeyboardActionBinding("move-right", Keyboard.RIGHT);
+				//binder.addGamepadActionBinding("move-left", GamepadControls.DPAD_LEFT);
+				//binder.addGamepadActionBinding("move-right", GamepadControls.DPAD_RIGHT);
 
 				/*
 				function function gameLoop():void {
