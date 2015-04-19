@@ -9,7 +9,7 @@ module KAB {
 
 		// Properties
 		private _id:string;
-		private lastActivatedTime:number;
+		private timeLastActivation:number;
 
 		private keyboardBindings:Array<KeyboardActionBinding>;
 		private keyboardActivated:boolean;
@@ -29,7 +29,7 @@ module KAB {
 
 		constructor(id:string) {
 			this._id = id;
-			this.lastActivatedTime = 0;
+			this.timeLastActivation = 0;
 			this.toleranceTime = 0;
 
 			this.keyboardBindings = [];
@@ -76,7 +76,7 @@ module KAB {
 					this.keyboardBindings[i].isActivated = true;
 					this.keyboardActivated = true;
 					this.keyboardValue = 1;
-					this.lastActivatedTime = Date.now();
+					this.timeLastActivation = Date.now();
 				}
 			}
 		}
@@ -119,7 +119,7 @@ module KAB {
 			}
 
 			if (hasMatch) {
-				if (isActivated && !this.gamepadButtonActivated) this.lastActivatedTime = Date.now();
+				if (isActivated && !this.gamepadButtonActivated) this.timeLastActivation = Date.now();
 
 				this.gamepadButtonActivated = isActivated;
 				this.gamepadButtonValue = newValue;
@@ -149,7 +149,7 @@ module KAB {
 		// PRIVATE INTERFACE ----------------------------------------------------------------------------------------------
 
 		public isWithinToleranceTime():boolean {
-			return this.toleranceTime <= 0 || this.lastActivatedTime >= Date.now() - this.toleranceTime;
+			return this.toleranceTime <= 0 || this.timeLastActivation >= Date.now() - this.toleranceTime;
 		}
 
 	}

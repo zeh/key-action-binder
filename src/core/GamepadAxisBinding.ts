@@ -2,32 +2,34 @@
 
 module KAB {
 	/**
-	 * Information on a keyboard event filter
+	 * Information on a gamepad event filter
 	 */
-	export class KeyboardActionBinding {
+	export class GamepadAxisBinding {
 
 		// Properties
-		public keyCode:number;
-		public keyLocation:number;
+		public axisCode:number;
+		public gamepadLocation:number;
+		public deadZone:number;
 
 		public isActivated:boolean;
+		public value:number;
 
 
 		// ================================================================================================================
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
-		constructor(keyCode:number, keyLocation:number) {
-			this.keyCode = keyCode;
-			this.keyLocation = keyLocation;
-			this.isActivated = false;
+		constructor(axisCode:number, deadZone:number, gamepadLocation:number) {
+			this.axisCode = axisCode;
+			this.deadZone = deadZone;
+			this.gamepadLocation = gamepadLocation;
+			this.value = 0;
 		}
-
 
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-		public matchesKeyboardKey(keyCode:number, keyLocation:number):boolean {
-			return (this.keyCode == keyCode || this.keyCode == KeyActionBinder.KeyCodes.ANY) && (this.keyLocation == keyLocation || this.keyLocation == KeyActionBinder.KeyLocations.ANY);
+		public matchesGamepadButton(axisCode:number, gamepadLocation:number):boolean {
+			return this.axisCode == axisCode && (this.gamepadLocation == gamepadLocation || this.gamepadLocation == KeyActionBinder.GamepadLocations.ANY);
 		}
 	}
 }

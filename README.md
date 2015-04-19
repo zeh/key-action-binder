@@ -77,4 +77,5 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Better demos
  * Test support for 2+ controllers
  * Automated tests
+ * Allow key combinations (modifiers)?
  * Add a fast path for gamepad status checking?

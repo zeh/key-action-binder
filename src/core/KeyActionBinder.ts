@@ -1,6 +1,7 @@
 /// <reference path="./../definitions/gamepad.d.ts" />
 /// <reference path="./../libs/signals/SimpleSignal.ts" />
 /// <reference path="Action.ts" />
+/// <reference path="Axis.ts" />
 
 /**
  * Provides universal input control for game controllers and keyboard
@@ -163,6 +164,7 @@ class KeyActionBinder {
 
 	// Instances
 	private actions:{ [index:string]:KAB.Action };													// All added actions, as a dictionary
+	private axes:{ [index:string]:KAB.Axis };														// All added axis, as a dictionary
 
 	private _onActionActivated:zehfernando.signals.SimpleSignal<{(action:string)}>;					// TODO: properly import modules to avoid using the whole identifier?
 	private _onActionDeactivated:zehfernando.signals.SimpleSignal<{(action:string)}>;
@@ -188,6 +190,7 @@ class KeyActionBinder {
 		this._isRunning = false;
 		this._maintainPlayerPositions = false;
 		this.actions = {};
+		this.axes = {};
 
 		this._onActionActivated = new zehfernando.signals.SimpleSignal<{(action:string)}>();
 		this._onActionDeactivated = new zehfernando.signals.SimpleSignal<{(action:string)}>();
@@ -275,6 +278,19 @@ class KeyActionBinder {
 		return this.actions[id];
 	}
 
+	/**
+	 * Gets an axis instance, creating it if necessary
+	 */
+	public axis(id:string):KAB.Axis {
+		// Check gamepad state
+		if (this.lastFrameGamepadsChecked < this.currentFrame) this.updateGamepadsState();
+
+		// Create Axis first if needed
+		if (!this.axes.hasOwnProperty(id)) this.axes[id] = new KAB.Axis(id);
+
+		return this.axes[id];
+	}
+
 
 	// ================================================================================================================
 	// ACCESSOR INTERFACE ---------------------------------------------------------------------------------------------
@@ -314,15 +330,13 @@ class KeyActionBinder {
 	// EVENT INTERFACE ------------------------------------------------------------------------------------------------
 
 	private onKeyDown(e:KeyboardEvent):void {
-		for (var iis in this.actions) {
-			this.actions[iis].interpretKeyDown(e.keyCode, e.location);
-		}
+		for (var iis in this.actions) this.actions[iis].interpretKeyDown(e.keyCode, e.location);
+		for (var iis in this.axes) this.axes[iis].interpretKeyDown(e.keyCode, e.location);
 	}
 
 	private onKeyUp(e:KeyboardEvent):void {
-		for (var iis in this.actions) {
-			this.actions[iis].interpretKeyUp(e.keyCode, e.location);
-		}
+		for (var iis in this.actions) this.actions[iis].interpretKeyUp(e.keyCode, e.location);
+		for (var iis in this.axes) this.axes[iis].interpretKeyUp(e.keyCode, e.location);
 	}
 
 	private onGamepadAdded(e:GamepadEvent):void {
@@ -353,10 +367,11 @@ class KeyActionBinder {
 		// Check all buttons of all gamepads
 		var gamepads = navigator.getGamepads();
 		var gamepad:Gamepad;
-		var i:number, j:number;
+		var i:number, j:number, l:number;
 		var action:KAB.Action;
 		var buttons:GamepadButton[];
-		var l:number;
+		var axis:KAB.Axis;
+		var axes:number[];
 
 		// For all gamepads...
 		for (i = 0; i < gamepads.length; i++) {
@@ -364,12 +379,25 @@ class KeyActionBinder {
 			if (gamepad != null) {
 				// ..and all actions...
 				for (var iis in this.actions) {
-					// ...interpret all buttons
 					action = this.actions[iis];
+
+					// ...interpret all gamepad buttons
 					buttons = gamepad.buttons;
 					l = buttons.length;
 					for (j = 0; j < l; j++) {
 						action.interpretGamepadButton(j, i, buttons[j].pressed, buttons[j].value);
+					}
+				}
+
+				// And in all axes...
+				for (var iis in this.axes) {
+					axis = this.axes[iis];
+
+					// ...and all gamepad axes
+					axes = gamepad.axes;
+					l = axes.length;
+					for (j = 0; j < l; j++) {
+						axis.interpretGamepadAxis(j, i, axes[j]);
 					}
 				}
 			}
@@ -400,5 +428,4 @@ class KeyActionBinder {
 		}
 		return this.bindCache[func];
 	}
-	
 }
