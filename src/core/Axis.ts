@@ -38,7 +38,7 @@ module KAB {
 			return this;
 		}
 
-		public bindGamepad(axisCode:number, deadZone:number = 0.1, gamepadLocation:number = KeyActionBinder.GamepadLocations.ANY):Axis {
+		public bindGamepad(axisCode:number, deadZone:number = 0.2, gamepadLocation:number = KeyActionBinder.GamepadLocations.ANY):Axis {
 			// TODO: check if already present?
 			this.gamepadAxisBindings.push(new GamepadAxisBinding(axisCode, deadZone, gamepadLocation));
 			return this;
@@ -65,30 +65,11 @@ module KAB {
 		}
 
 		public interpretGamepadAxis(axisCode:number, gamepadLocation:number, valueState:number):void {
-			/*
-			var hasMatch:boolean;
-			var isActivated:boolean = false;
-			var newValue:number = 0;
-			for (var i:number = 0; i < this.gamepadButtonBindings.length; i++) {
-				if (this.gamepadButtonBindings[i].matchesGamepadButton(buttonCode, gamepadLocation)) {
-					hasMatch = true;
-					this.gamepadButtonBindings[i].isActivated = pressedState;
-					this.gamepadButtonBindings[i].value = valueState;
-
-					isActivated = isActivated || pressedState;
-					if (valueState > newValue) newValue = valueState;
+			for (var i:number = 0; i < this.gamepadAxisBindings.length; i++) {
+				if (this.gamepadAxisBindings[i].matchesGamepadAxis(axisCode, gamepadLocation)) {
+					this.gamepadAxisBindings[i].value = valueState;
 				}
 			}
-
-			if (hasMatch) {
-				if (isActivated && !this.gamepadButtonActivated) this.lastActivatedTime = Date.now();
-
-				this.gamepadButtonActivated = isActivated;
-				this.gamepadButtonValue = newValue;
-
-				if (!this.gamepadButtonActivated) this.gamepadButtonConsumed = false;
-			}
-			*/
 		}
 
 
@@ -107,6 +88,14 @@ module KAB {
 			// Check keyboard values
 			for (var i = 0; i < this.keyboardBindings.length; i++) {
 				val = this.keyboardBindings[i].value;
+				if (Math.abs(val) > Math.abs(bestValue)) {
+					bestValue = val;
+				}
+			}
+
+			// Check gamepad values
+			for (var i = 0; i < this.gamepadAxisBindings.length; i++) {
+				val = this.gamepadAxisBindings[i].value;
 				if (Math.abs(val) > Math.abs(bestValue)) {
 					bestValue = val;
 				}

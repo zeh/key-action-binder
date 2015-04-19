@@ -118,6 +118,8 @@ module KAB {
 				}
 			}
 
+			// TODO: I think this will fail if two buttons are used for the same action; values will be overwritten
+
 			if (hasMatch) {
 				if (isActivated && !this.gamepadButtonActivated) this.timeLastActivation = Date.now();
 

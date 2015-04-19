@@ -69,7 +69,6 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 
 ## To-do
 
- * Interpret gamepad axes
  * Proper documentation
  * Allow detecting "any" gamepad/keyboard key (for "press any key")
  * Allow complex sequence bindings with timing constraints (hadouken, etc)

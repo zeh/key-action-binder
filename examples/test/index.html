@@ -77,7 +77,7 @@
 					txt += "axis x = " + binder.axis("x").value + "<br>"
 					
 					if (binder.action("jump").activated) {
-						//binder.action("jump").consume();
+						binder.action("jump").consume();
 						console.log("JUMPED!");
 					}
 
