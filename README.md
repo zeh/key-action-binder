@@ -17,39 +17,67 @@ Notice: this is still under development. It is based on my original [KeyActionBi
 
 ## Usage
 
+Include the file:
+
 	<script src="key-action-binder.min.js"></script>
 
-	// Create instance
+Create an instance:
+
 	binder = new KeyActionBinder();
-	
-	// Setup as many action bindings as you want
+
+Setup actions with as many bindings as you want:
+
+	// Simple binding, keyboard
 	binder.action("move-left").bindKeyboard(KeyActionBinder.KeyCodes.LEFT);
 	binder.action("move-right").bindKeyboard(KeyActionBinder.KeyCodes.RIGHT);
+	
+	// Simple binding, gamepad
 	binder.action("move-left").bindGamepad(KeyActionBinder.GamepadButtons.DPAD_LEFT);
 	binder.action("move-right").bindGamepad(KeyActionBinder.GamepadButtons.DPAD_RIGHT);
 
 	// Actions can be chained for simpler use
+	binder.action("fire")
+		.bindKeyboard(KeyActionBinder.KeyCodes.ENTER)
+		.bindGamepad(KeyActionBinder.GamepadButtons.ACTION_LEFT);
+
+Some actions can have a tolerance time (in seconds), so when checking if an action is active, it also checks if it has just been pressed:
+
 	binder.action("jump")
 		.bindKeyboard(KeyActionBinder.KeyCodes.SPACE)
 		.bindGamepad(KeyActionBinder.GamepadButtons.ACTION_DOWN)
-		.setTolerance(0.05); // Set the tolerance for an action to 0.05s; to prevent a player from hitting the jump button while still in the air, for example
+		.setTolerance(0.05); // To prevent a player from hitting the jump button while still in the air
 
-	// Evaluate actions in the game loop
+Then, evaluate the actions inside the game loop:
+
 	function myGameLoop() {
 		// Check whether the player should move
 		if (binder.action("move-left").activated) {
-			// Move left...
+			// (...code for moving left...)
 		} else if (binder.action("move-right").activated) {
-			// Move right...
+			// (...code for moving right...)
 		}
-		
+
+Actions can be "consumed" so they only work once when pressed:
+
 		// Check whether an action should be performed
 		if (playerIsOnGround && binder.action("jump").activated) {
-			// Perform jump...
+			// (...code for performing jump...)
 
 			// Consume the action, so the player has to press jump again to perform another jump
 			binder.action("jump").consume();
 		}
+	}
+
+You can also use the axis for movements, including simulating an axis with keyboard keys:
+	
+	// You can also use the axis for movement instead:
+	binder.axis("move-x")
+		.bindGamepad(KeyActionBinder.GamepadAxes.STICK_LEFT_X)
+		.bindKeyboard(KeyActionBinder.KeyCodes.LEFT, KeyActionBinder.KeyCodes.RIGHT);
+		
+	function myGameLoop() {
+		var speedScaleX = binder.axis("move-x").value; // Value will be a value between -1 and 1
+		player.x += speedScaleX * maximumSpeed;
 	}
 
 ## Tests/demos
@@ -69,12 +97,16 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 
 ## To-do
 
+ * Test:
+   * support for 2+ controllers
+   * Actions bound to several different keys/gamepad buttons at the same time
+   
+ * Gamepad button axis bind (like keyboard axis)
  * Proper documentation
  * Allow detecting "any" gamepad/keyboard key (for "press any key")
  * Allow complex sequence bindings with timing constraints (hadouken, etc)
  * More profiling and testing performance/bottlenecks/memory allocations (http://www.html5rocks.com/en/tutorials/webperformance/usertiming/)
  * Better demos
- * Test support for 2+ controllers
  * Automated tests
  * Allow key combinations (modifiers)?
  * Add a fast path for gamepad status checking?
