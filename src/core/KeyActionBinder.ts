@@ -11,16 +11,25 @@ class KeyActionBinder {
 
 	// Properties
 	private _isRunning:boolean;
-	private _maintainPlayerPositions:boolean;
+	private _maintainPlayerPositions:boolean;														// Whether it tries to keep player positions or not
+	private _recentDevice:Gamepad;																	// The most recent device that sent an event
 
-	// Events
+	// Instances
+	private bindings:Array<BindingInfo>;															// Actual existing bindings, their action, and whether they're activated or not
+
 	private _onActionActivated:zehfernando.signals.SimpleSignal<(action: string) => void>;
 	private _onActionDeactivated:zehfernando.signals.SimpleSignal<(action: string) => void>;
 	private _onActionValueChanged:zehfernando.signals.SimpleSignal<(action: string, value:number) => void>;
 	private _onDevicesChanged:zehfernando.signals.SimpleSignal<() => void>;
-	private _onRecentDeviceChanged:zehfernando.signals.SimpleSignal<(action: string) => void>; // TODO: should be GameInputDevice
+	private _onRecentDeviceChanged:zehfernando.signals.SimpleSignal<(gamepad: Gamepad) => void>; // TODO: use a Gamepad wrapper?
 
-	private bindCache:any; // Should have been "{ [index: Function]: Function }", but that's not allowed
+	private gameInputDevices:Array<Gamepad>;
+	private gameInputDeviceIds:Array<String>;
+
+	private bindCache: any; // Should have been "{ [index: Function]: Function }", but that's not allowed
+
+	// TODO:
+	// * Check navigator.getGamepads to see if gamepads are actually accessible
 
 
 	// ================================================================================================================
@@ -31,14 +40,17 @@ class KeyActionBinder {
 
 		this._isRunning = false;
 		this._maintainPlayerPositions = false;
-		//this.bindings = new Array<BindingInfo>();
-		//actionsActivations = {};
+		this.bindings = new Array<BindingInfo>();
+		//actionsActivations = {}; // TODO
 
 		this._onActionActivated = new zehfernando.signals.SimpleSignal<(action: string) => void>();
 		this._onActionDeactivated = new zehfernando.signals.SimpleSignal<(action: string) => void>();
 		this._onActionValueChanged = new zehfernando.signals.SimpleSignal<(action: string, value: number) => void>();
 		this._onDevicesChanged = new zehfernando.signals.SimpleSignal<() => void>();
-		this._onRecentDeviceChanged = new zehfernando.signals.SimpleSignal<(action: string) => void>();
+		this._onRecentDeviceChanged = new zehfernando.signals.SimpleSignal<(gamepad: Gamepad) => void>();
+
+		this.gameInputDevices = [];
+		this.gameInputDeviceIds = [];
 
 		//gameInputDevices = new Vector.<GameInputDevice>();
 		//gameInputDeviceIds = new Vector.<String>();
@@ -109,6 +121,14 @@ class KeyActionBinder {
 		}
 	}
 
+	/**
+	 * Update the known state of all buttons/axis
+	 */
+	public update(): void {
+		// TODO: check controls to see if any has changed
+		// TODO: move this outside? make it automatic (with requestAnimationFrame), or make it be called once per frame when any action is checked
+	}
+
 
 	// ================================================================================================================
 	// ACCESSOR INTERFACE ---------------------------------------------------------------------------------------------
@@ -169,126 +189,108 @@ class KeyActionBinder {
 	private refreshGameInputDeviceList(): void {
 		// The list of game devices has changed
 
-		console.error("NOT IMPLEMENTED: refreshGameInputDeviceList");
+		if (false) {
+		//if (this._maintainPlayerPositions && gameInputDeviceIds != null) {
+			// TODO: implement this
+			/*
+			// Will try to maintain player positions:
+			// * A removed device will continue to exist in the list (as a null device), unless it's the latest device
+			// * An added device will try to be added to its previously existing position, if one can be found
+			// * If a previously existing position cannot be found, the device takes the first available position
 
-		/*
+			var gamepadPosition: int;
 
-		// Check if there was any actual change to the list
-		// This is necessary because some versions of Flash keep firing the changed event every second (Windows 7 + Firefox using Flash Player 12.0.0.44)
-		var i: int;
-		var hasChanged: Boolean = false;
-
-		if (GameInput.numDevices != gameInputDevices.length) {
-			hasChanged = true;
-		} else {
+			// Creates a list of all the new ids
+			var newGamepadIds: Vector.<String> = new Vector.<String>();
+			var newGamepads: Vector.<GameInputDevice> = new Vector.<GameInputDevice>();
 			for (i = 0; i < GameInput.numDevices; i++) {
-				if (gameInputDevices[i] != GameInput.getDeviceAt(i)) {
-					hasChanged = true;
-					break;
+				if (GameInput.getDeviceAt(i) != null) {
+					newGamepadIds.push(GameInput.getDeviceAt(i).id);
+					newGamepads.push(GameInput.getDeviceAt(i));
 				}
 			}
-		}
 
-		if (hasChanged) {
-			// List has actually changed
-			removeGameInputDeviceEvents();
-			addGameInputDeviceEvents();
+			// Create a list of available slots for insertion
+			var availableSlots: Vector.<int> = new Vector.<int>();
 
-			if (_maintainPlayerPositions && gameInputDeviceIds != null) {
-				// Will try to maintain player positions:
-				// * A removed device will continue to exist in the list (as a null device), unless it's the latest device
-				// * An added device will try to be added to its previously existing position, if one can be found
-				// * If a previously existing position cannot be found, the device takes the first available position
-
-				var gamepadPosition: int;
-
-				// Creates a list of all the new ids
-				var newGamepadIds: Vector.<String> = new Vector.<String>();
-				var newGamepads: Vector.<GameInputDevice> = new Vector.<GameInputDevice>();
-				for (i = 0; i < GameInput.numDevices; i++) {
-					if (GameInput.getDeviceAt(i) != null) {
-						newGamepadIds.push(GameInput.getDeviceAt(i).id);
-						newGamepads.push(GameInput.getDeviceAt(i));
-					}
-				}
-
-				// Create a list of available slots for insertion
-				var availableSlots: Vector.<int> = new Vector.<int>();
-
-				// First, check for removed items
-				// Goes backward, so it can remove items from the list
-				var isEndPure: Boolean = true;
-				i = gameInputDeviceIds.length - 1;
-				while (i >= 0) {
-					gamepadPosition = newGamepadIds.indexOf(gameInputDeviceIds[i]);
-					if (gamepadPosition < 0) {
-						// This device id doesn't exist in the new list, therefore it's removed
-						if (isEndPure) {
-							// But since it's in the end of the list, actually remove it
-							gameInputDeviceIds.splice(i, 1);
-						} else {
-							// It's in the middle of the list, so just mark that spot as available
-							availableSlots.push(i);
-						}
+			// First, check for removed items
+			// Goes backward, so it can remove items from the list
+			var isEndPure: Boolean = true;
+			i = gameInputDeviceIds.length - 1;
+			while (i >= 0) {
+				gamepadPosition = newGamepadIds.indexOf(gameInputDeviceIds[i]);
+				if (gamepadPosition < 0) {
+					// This device id doesn't exist in the new list, therefore it's removed
+					if (isEndPure) {
+						// But since it's in the end of the list, actually remove it
+						gameInputDeviceIds.splice(i, 1);
 					} else {
-						// This device id exists in the list, so ignore and assume it's not in the end anymore
-						isEndPure = false;
+						// It's in the middle of the list, so just mark that spot as available
+						availableSlots.push(i);
 					}
-					i--;
+				} else {
+					// This device id exists in the list, so ignore and assume it's not in the end anymore
+					isEndPure = false;
 				}
+				i--;
+			}
 
-				// Now, add new items that are not in the list
-				for (i = 0; i < newGamepadIds.length; i++) {
-					gamepadPosition = gameInputDeviceIds.indexOf(newGamepadIds[i]);
-					if (gamepadPosition < 0) {
-						// This gamepad is not in the list, so add it
-						if (availableSlots.length > 0) {
-							// Add it in the first available slot
-							gameInputDeviceIds.push(newGamepadIds[availableSlots[0]]);
-							availableSlots.splice(0, 1);
-						} else {
-							// No more slots availabloe, add it at the end
-							gameInputDeviceIds.push(newGamepadIds[i]);
-						}
-					}
-				}
-
-				// Now that gameInputDeviceIds is correct, just create the list of references
-				gameInputDevices.length = gameInputDeviceIds.length;
-				gameInputDeviceDefinitions.length = gameInputDeviceIds.length;
-				for (i = 0; i < gameInputDeviceIds.length; i++) {
-					gamepadPosition = newGamepadIds.indexOf(gameInputDeviceIds[i]);
-					if (gamepadPosition < 0) {
-						// A spot for a gamepad that was just removed
-						gameInputDevices[i] = null;
-						gameInputDeviceDefinitions[i] = null;
+			// Now, add new items that are not in the list
+			for (i = 0; i < newGamepadIds.length; i++) {
+				gamepadPosition = gameInputDeviceIds.indexOf(newGamepadIds[i]);
+				if (gamepadPosition < 0) {
+					// This gamepad is not in the list, so add it
+					if (availableSlots.length > 0) {
+						// Add it in the first available slot
+						gameInputDeviceIds.push(newGamepadIds[availableSlots[0]]);
+						availableSlots.splice(0, 1);
 					} else {
-						// A normal game input device
-						gameInputDevices[i] = newGamepads[gamepadPosition];
-						gameInputDeviceDefinitions[i] = findGamepadInfo(newGamepads[gamepadPosition]);
-					}
-				}
-			} else {
-				// Full refresh: create a new list of devices
-				gameInputDevices.length = GameInput.numDevices;
-				gameInputDeviceIds.length = GameInput.numDevices;
-				gameInputDeviceDefinitions.length = GameInput.numDevices;
-				for (i = 0; i < GameInput.numDevices; i++) {
-					gameInputDevices[i] = GameInput.getDeviceAt(i);
-					if (gameInputDevices[i] != null) {
-						gameInputDeviceIds[i] = gameInputDevices[i].id;
-						gameInputDeviceDefinitions[i] = findGamepadInfo(gameInputDevices[i]);
-					} else {
-						gameInputDeviceIds[i] = null;
-						gameInputDeviceDefinitions[i] = null;
+						// No more slots availabloe, add it at the end
+						gameInputDeviceIds.push(newGamepadIds[i]);
 					}
 				}
 			}
 
-			// Dispatch the signal
-			_onDevicesChanged.dispatch();
+			// Now that gameInputDeviceIds is correct, just create the list of references
+			gameInputDevices.length = gameInputDeviceIds.length;
+			gameInputDeviceDefinitions.length = gameInputDeviceIds.length;
+			for (i = 0; i < gameInputDeviceIds.length; i++) {
+				gamepadPosition = newGamepadIds.indexOf(gameInputDeviceIds[i]);
+				if (gamepadPosition < 0) {
+					// A spot for a gamepad that was just removed
+					gameInputDevices[i] = null;
+					gameInputDeviceDefinitions[i] = null;
+				} else {
+					// A normal game input device
+					gameInputDevices[i] = newGamepads[gamepadPosition];
+					gameInputDeviceDefinitions[i] = findGamepadInfo(newGamepads[gamepadPosition]);
+				}
+			}
+			*/
+		} else {
+			// Full refresh: create a new list of devices
+			var gamepads: Array<Gamepad> = navigator.getGamepads();
+
+			this.gameInputDevices.length = gamepads.length;
+			this.gameInputDeviceIds.length = gamepads.length;
+			//this.gameInputDeviceDefinitions.length = GameInput.numDevices; // TODO: clear this if not needed, since browser
+
+			// This check is necessary because empty gamepads are left behind when removed
+			// TODO: test this to see if it's actually needed to keep track of the devices
+			for (var i = 0; i < gamepads.length; i++) {
+				if (this.gameInputDevices[i] != null) {
+					this.gameInputDevices[i] = gamepads[i];
+					this.gameInputDeviceIds[i] = gamepads[i].id;
+					//gameInputDeviceDefinitions[i] = findGamepadInfo(gameInputDevices[i]); // TODO: clear this if not needed, since the browser already maps it
+				} else {
+					this.gameInputDeviceIds[i] = null;
+					//gameInputDeviceDefinitions[i] = null; // TODO: clear this if not needed, since the browser already maps it
+				}
+			}
 		}
-		*/
+
+		// Dispatch the signal
+		this._onDevicesChanged.dispatch();
 	}
 
 	/**
