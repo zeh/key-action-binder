@@ -47,7 +47,7 @@ Some actions can have a tolerance time (in seconds), so when checking if an acti
 		.bindGamepad(KeyActionBinder.GamepadButtons.ACTION_DOWN)
 		.setTolerance(0.05); // To prevent a player from hitting the jump button while still in the air
 
-Then, evaluate the actions inside the game loop:
+Then, evaluate the actions inside your game loop:
 
 	function myGameLoop() {
 		// Check whether the player should move
@@ -56,14 +56,15 @@ Then, evaluate the actions inside the game loop:
 		} else if (binder.action("move-right").activated) {
 			// (...code for moving right...)
 		}
+	}
 
 Actions can be "consumed" so they only work once when pressed:
 
-		// Check whether an action should be performed
+	function myGameLoop() {
 		if (playerIsOnGround && binder.action("jump").activated) {
 			// (...code for performing jump...)
 
-			// Consume the action, so the player has to press jump again to perform another jump
+			// Consume the action, so the player has to press jump again to perform another jump (rather than keep it pressed)
 			binder.action("jump").consume();
 		}
 	}
@@ -98,10 +99,10 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 ## To-do
 
  * Test:
-   * support for 2+ controllers
-   * Actions bound to several different keys/gamepad buttons at the same time
+  * support for 2+ controllers
+  * Actions bound to several different keys/gamepad buttons at the same time
    
- * Gamepad button axis bind (like keyboard axis)
+ * Axis-simulating gamepad button binds (like keyboard axis)
  * Proper documentation
  * Allow detecting "any" gamepad/keyboard key (for "press any key")
  * Allow complex sequence bindings with timing constraints (hadouken, etc)
