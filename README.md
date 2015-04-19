@@ -70,8 +70,8 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Proper documentation
  * Allow detecting "any" gamepad/keyboard key (for "press any key")
  * Allow complex sequence bindings (hadouken, etc)
- * Allow timed events (for jump etc)
  * More profiling and testing performance/bottlenecks/memory allocations (http://www.html5rocks.com/en/tutorials/webperformance/usertiming/)
  * Better demos
  * Test support for 2+ controllers
  * Automated tests
+ * Add a fast path for gamepad status checking?

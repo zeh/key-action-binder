@@ -48,6 +48,7 @@
 				binder.action("move-right").addKeyboardBinding(KeyActionBinder.KeyCodes.RIGHT);
 				
 				binder.action("jump")
+					.setTolerance(0.3)
 					.addKeyboardBinding(KeyActionBinder.KeyCodes.SPACE)
 					.addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_DOWN);
 
@@ -71,7 +72,7 @@
 					txt += "ar = " + binder.action("ar").activated + ", " + binder.action("ar").value + "<br>"
 					
 					if (binder.action("jump").activated) {
-						binder.action("jump").consume();
+						//binder.action("jump").consume();
 						console.log("JUMPED!");
 					}
 

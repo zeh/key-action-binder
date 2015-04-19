@@ -9,7 +9,7 @@ module KAB {
 
 		// Properties
 		private _id:string;
-		private _lastActivatedTime:number;
+		private lastActivatedTime:number;
 
 		private keyboardBindings:Array<KeyboardBinding>;
 		private keyboardActivated:boolean;
@@ -21,13 +21,16 @@ module KAB {
 		private gamepadButtonValue:number;
 		private gamepadButtonConsumed:boolean;
 
+		private toleranceTime:number;										// Tolerance for activations, in ms
+
 
 		// ================================================================================================================
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
 		constructor(id:string) {
 			this._id = id;
-			this._lastActivatedTime = 0;
+			this.lastActivatedTime = 0;
+			this.toleranceTime = 0;
 
 			this.keyboardBindings = [];
 			this.keyboardActivated = false;
@@ -56,6 +59,11 @@ module KAB {
 			return this;
 		}
 
+		public setTolerance(timeInSeconds:number):Action {
+			this.toleranceTime = timeInSeconds * 1000;
+			return this;
+		}
+
 		public consume():void {
 			if (this.keyboardActivated) this.keyboardConsumed = true;
 			if (this.gamepadButtonActivated) this.gamepadButtonConsumed = true;
@@ -68,6 +76,7 @@ module KAB {
 					this.keyboardBindings[i].isActivated = true;
 					this.keyboardActivated = true;
 					this.keyboardValue = 1;
+					this.lastActivatedTime = Date.now();
 				}
 			}
 		}
@@ -110,6 +119,8 @@ module KAB {
 			}
 
 			if (hasMatch) {
+				if (isActivated && !this.gamepadButtonActivated) this.lastActivatedTime = Date.now();
+
 				this.gamepadButtonActivated = isActivated;
 				this.gamepadButtonValue = newValue;
 
@@ -126,11 +137,20 @@ module KAB {
 		}
 
 		public get activated():boolean {
-			return (this.keyboardActivated && !this.keyboardConsumed) || (this.gamepadButtonActivated && !this.gamepadButtonConsumed);
+			return ((this.keyboardActivated && !this.keyboardConsumed) || (this.gamepadButtonActivated && !this.gamepadButtonConsumed)) && this.isWithinToleranceTime();
 		}
 
 		public get value():number {
-			return Math.max(this.keyboardConsumed ? 0 : this.keyboardValue, this.gamepadButtonConsumed ? 0 : this.gamepadButtonValue);
+			return this.isWithinToleranceTime() ? Math.max(this.keyboardConsumed ? 0 : this.keyboardValue, this.gamepadButtonConsumed ? 0 : this.gamepadButtonValue) : 0;
 		}
+
+
+		// ================================================================================================================
+		// PRIVATE INTERFACE ----------------------------------------------------------------------------------------------
+
+		public isWithinToleranceTime():boolean {
+			return this.toleranceTime <= 0 || this.lastActivatedTime >= Date.now() - this.toleranceTime;
+		}
+
 	}
 }
