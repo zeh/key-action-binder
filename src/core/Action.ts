@@ -50,11 +50,29 @@ module KAB {
 		}
 
 		public interpretKeyDown(keyCode:number, keyLocation:number):void {
-			console.error("Action.interpretKeyDown() not implemented yet");
+			var isActivated:boolean = false;
+			for (var i:number = 0; i < this._keyboardBindings.length; i++) {
+				if (!this._keyboardBindings[i].isActivated && this._keyboardBindings[i].matchesKeyboardKey(keyCode, keyLocation)) {
+					// Activated
+					this._keyboardBindings[i].isActivated = true;
+				}
+				isActivated = isActivated || this._keyboardBindings[i].isActivated;
+			}
+			this._activated = isActivated;
+			this._value = this._activated ? 1 : 0;
 		}
 
 		public interpretKeyUp(keyCode:number, keyLocation:number):void {
-			console.error("Action.interpretKeyUp() not implemented yet");
+			var isActivated:boolean = false;
+			for (var i:number = 0; i < this._keyboardBindings.length; i++) {
+				if (this._keyboardBindings[i].isActivated && this._keyboardBindings[i].matchesKeyboardKey(keyCode, keyLocation)) {
+					// Deactivated
+					this._keyboardBindings[i].isActivated = false;
+				}
+				isActivated = isActivated || this._keyboardBindings[i].isActivated;
+			}
+			this._activated = isActivated;
+			this._value = this._activated ? 1 : 0;
 		}
 
 

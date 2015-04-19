@@ -10,6 +10,7 @@ module KAB {
 		public keyCode:number;
 		public keyLocation:number;
 
+		public isActivated:boolean;
 
 		// ================================================================================================================
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
@@ -17,19 +18,15 @@ module KAB {
 		constructor(keyCode:number, keyLocation:number) {
 			this.keyCode = keyCode;
 			this.keyLocation = keyLocation;
+			this.isActivated = false;
 		}
 
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
+		// TODO: add modifiers?
 		public matchesKeyboardKey(keyCode:number, keyLocation:number): boolean {
 			return (this.keyCode == keyCode || this.keyCode == KeyActionBinder.KEY_CODE_ANY) && (this.keyLocation == keyLocation || this.keyLocation == KeyActionBinder.KEY_LOCATION_ANY);
-		}
-
-		// TODO: add modifiers?
-
-		public matchesGamepadControl(controlId: String, gamepadIndex:number): boolean {
-			return false;
 		}
 	}
 }

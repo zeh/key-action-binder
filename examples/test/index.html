@@ -44,13 +44,25 @@
 				
 				// Create instance
 				binder = new KeyActionBinder();
+				binder.action("move-left").addKeyboardBinding(37);
+				binder.action("move-right").addKeyboardBinding(39);
 				
 				window.readGamepad = function() {
 					binder.update();
 					requestAnimationFrame(window.readGamepad);
+					
+					var txt = "";
+					txt += "move left = " + binder.action("move-left").activated + ", " + binder.action("move-left").value;
+					txt += "<br>";
+					txt += "move right = " + binder.action("move-right").activated + ", " + binder.action("move-right").value;
+					
+					document.getElementById("messages").innerHTML = txt;
 				};
 				
 				window.readGamepad();
+				
+				// https://developer.mozilla.org/en-US/docs/Web/Guide/API/Gamepad
+				// https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
 
 				// Setup as many action bindings as you want
 				//binder.addKeyboardActionBinding("move-left", Keyboard.LEFT);
