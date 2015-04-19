@@ -30,7 +30,7 @@ Notice: this is still under development. It is based on my original [KeyActionBi
 
 	// Evaluate actions in the game loop
 	function gameLoop() {
-		// This is needed to reinterpret gamnepad state; should be automatic in the future
+		// This is needed to reinterpret gamepad state; should be automatic in the future
 		binder.update();
 
 		if (binder.action("move-left").activated) {
