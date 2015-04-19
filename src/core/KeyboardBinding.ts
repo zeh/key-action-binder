@@ -28,7 +28,7 @@ module KAB {
 
 		// TODO: add modifiers?
 		public matchesKeyboardKey(keyCode:number, keyLocation:number): boolean {
-			return (this.keyCode == keyCode || this.keyCode == KeyActionBinder.KEY_CODE_ANY) && (this.keyLocation == keyLocation || this.keyLocation == KeyActionBinder.KEY_LOCATION_ANY);
+			return (this.keyCode == keyCode || this.keyCode == KeyActionBinder.KeyCodes.ANY) && (this.keyLocation == keyLocation || this.keyLocation == KeyActionBinder.KeyLocations.ANY);
 		}
 	}
 }

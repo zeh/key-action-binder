@@ -13,11 +13,146 @@ class KeyActionBinder {
 	// Constants
 	public static VERSION:String = "0.0.0";
 
-	//public static const KEYBOARD_DEVICE:GameInputDevice = null;		// Set to null by default, since gamepads are non-null (and you can't create/subclass a GameInputDevice)
+	// Enums (Internal)
+	public static KeyCodes = {
+		ANY: 81653812,
+		A: 65,
+		ALT: 18,
+		B: 66,
+		BACKQUOTE: 192,
+		BACKSLASH: 220,
+		BACKSPACE: 8,
+		C: 67,
+		CAPS_LOCK: 20,
+		COMMA: 188,
+		CTRL: 17,
+		D: 68,
+		DELETE: 46,
+		DOWN: 40,
+		E: 69,
+		END: 35,
+		ENTER: 13,
+		EQUAL: 187,
+		ESCAPE: 27,
+		F: 70,
+		F1: 112,
+		F10: 121,
+		F11: 122,
+		F12: 123,
+		F2: 113,
+		F3: 114,
+		F4: 115,
+		F5: 116,
+		F6: 117,
+		F7: 118,
+		F8: 119,
+		F9: 120,
+		G: 71,
+		H: 72,
+		HOME: 36,
+		I: 73,
+		INSERT: 45,
+		J: 74,
+		K: 75,
+		L: 76,
+		LEFT: 37,
+		LEFTBRACKET: 219,
+		M: 77,
+		MINUS: 189,
+		N: 78,
+		NUMBER_0: 48,
+		NUMBER_1: 49,
+		NUMBER_2: 50,
+		NUMBER_3: 51,
+		NUMBER_4: 52,
+		NUMBER_5: 53,
+		NUMBER_6: 54,
+		NUMBER_7: 55,
+		NUMBER_8: 56,
+		NUMBER_9: 57,
+		NUMPAD_0: 96,
+		NUMPAD_1: 97,
+		NUMPAD_2: 98,
+		NUMPAD_3: 99,
+		NUMPAD_4: 100,
+		NUMPAD_5: 101,
+		NUMPAD_6: 102,
+		NUMPAD_7: 103,
+		NUMPAD_8: 104,
+		NUMPAD_9: 105,
+		NUMPAD_ADD: 107,
+		NUMPAD_DECIMAL: 110,
+		NUMPAD_DIVIDE: 111,
+		NUMPAD_MULTIPLY: 106,
+		NUMPAD_SUBTRACT: 109,
+		NUM_LOCK: 144,
+		O: 79,
+		P: 80,
+		PAGE_DOWN: 34,
+		PAGE_UP: 33,
+		PAUSE: 19,
+		PERIOD: 190,
+		Q: 81,
+		QUOTE: 222,
+		R: 82,
+		RIGHT: 39,
+		RIGHTBRACKET: 221,
+		S: 83,
+		SCROLL_LOCK: 145, // Test
+		SELECT: 93, // Menu in windows
+		SEMICOLON: 186,
+		SHIFT: 16,
+		SLASH: 191,
+		SPACE: 32,
+		T: 84,
+		TAB: 9,
+		U: 85,
+		UP: 38,
+		V: 86,
+		W: 87,
+		WINDOW_LEFT: 91,
+		WINDOW_RIGHT: 92,
+		X: 88,
+		Y: 89,
+		Z: 90
+	};
 
-	public static GAMEPAD_INDEX_ANY:number = 81653811;
-	public static KEY_CODE_ANY:number = 81653812;
-	public static KEY_LOCATION_ANY:number = 81653813;
+	public static KeyLocations = {
+		ANY: 81653813,
+		STANDARD: 0,
+		LEFT: 1,
+		RIGHT: 2,
+		NUMPAD: 3,
+	};
+
+	public static GamepadButtons = {
+		ANY: 81653811,
+		FACE_1: 0, // Face (main) buttons
+		FACE_2: 1,
+		FACE_3: 2,
+		FACE_4: 3,
+		LEFT_SHOULDER: 4, // Top shoulder buttons
+		RIGHT_SHOULDER: 5,
+		LEFT_SHOULDER_BOTTOM: 6, // Bottom shoulder buttons
+		RIGHT_SHOULDER_BOTTOM: 7,
+		SELECT: 8,
+		START: 9,
+		LEFT_ANALOGUE_STICK: 10, // Analogue sticks (if depressible)
+		RIGHT_ANALOGUE_STICK: 11,
+		PAD_TOP: 12, // Directional (discrete) pad
+		PAD_BOTTOM: 13,
+		PAD_LEFT: 14,
+		PAD_RIGHT: 15
+	};
+
+	public static GamepadAxes = {
+		LEFT_ANALOGUE_HOR: 0,
+		LEFT_ANALOGUE_VERT: 1,
+		RIGHT_ANALOGUE_HOR: 2,
+		RIGHT_ANALOGUE_VERT: 3
+	}
+
+	//public static const KEYBOARD_DEVICE:GameInputDevice = null;		// Set to null by default, since gamepads are non-null (and you can't create/subclass a GameInputDevice)
 
 	// Properties
 	private _isRunning:boolean;
@@ -82,10 +217,11 @@ class KeyActionBinder {
 	 * @see #isRunning
 	 * @see #stop()
 	 */
-	public start(): void {
+	public start():void {
 		if (!this._isRunning) {
 			// Starts listening to keyboard events
 			window.addEventListener("keydown", this.getBoundFunction(this.onKeyDown));
+			//window.addEventListener("keypress", this.getBoundFunction(this.onKeyDown)); // this fires with completely unrelated key codes; TODO: investigate why
 			window.addEventListener("keyup", this.getBoundFunction(this.onKeyUp));
 
 			// Starts listening to device change events
@@ -112,7 +248,7 @@ class KeyActionBinder {
 	 * @see #isRunning
 	 * @see #start()
 	 */
-	public stop(): void {
+	public stop():void {
 		if (this._isRunning) {
 			// Stops listening to keyboard events
 			window.removeEventListener("keydown", this.getBoundFunction(this.onKeyDown));
@@ -122,8 +258,8 @@ class KeyActionBinder {
 			window.removeEventListener("gamepadconnected", this.getBoundFunction(this.onGameInputDeviceAdded));
 			window.removeEventListener("gamepaddisconnected", this.getBoundFunction(this.onGameInputDeviceRemoved));
 
-			//gameInputDevices.length = 0;
-			//gameInputDeviceDefinitions.length = 0;
+			this.gameInputDevices.length = 0;
+			this.gameInputDeviceIds.length = 0;
 			//removeGameInputDeviceEvents();
 
 			this._isRunning = false;
@@ -143,7 +279,7 @@ class KeyActionBinder {
 	/**
 	 * Update the known state of all buttons/axis
 	 */
-	public update(): void {
+	public update():void {
 		// TODO: check controls to see if any has changed
 		// TODO: move this outside? make it automatic (with requestAnimationFrame), or make it be called once per frame when any action is checked
 
@@ -189,23 +325,23 @@ class KeyActionBinder {
 	// ================================================================================================================
 	// EVENT INTERFACE ------------------------------------------------------------------------------------------------
 
-	private onKeyDown(e: KeyboardEvent): void {
+	private onKeyDown(e: KeyboardEvent):void {
 		for (var iis in this.actions) {
 			this.actions[iis].interpretKeyDown(e.keyCode, e.location);
 		}
 	}
 
-	private onKeyUp(e: KeyboardEvent): void {
+	private onKeyUp(e: KeyboardEvent):void {
 		for (var iis in this.actions) {
 			this.actions[iis].interpretKeyUp(e.keyCode, e.location);
 		}
 	}
 
-	private onGameInputDeviceAdded(e: GamepadEvent): void {
+	private onGameInputDeviceAdded(e: GamepadEvent):void {
 		console.error("NOT IMPLEMENTED: onGameInputDeviceAdded");
 	}
 
-	private onGameInputDeviceRemoved(e: GamepadEvent): void {
+	private onGameInputDeviceRemoved(e: GamepadEvent):void {
 		console.error("NOT IMPLEMENTED: onGameInputDeviceRemoved");
 	}
 
@@ -213,7 +349,7 @@ class KeyActionBinder {
 	// ================================================================================================================
 	// PRIVATE INTERFACE ----------------------------------------------------------------------------------------------
 
-	private refreshGameInputDeviceList(): void {
+	private refreshGameInputDeviceList():void {
 		// The list of game devices has changed
 
 		if (false) {

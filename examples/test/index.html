@@ -44,8 +44,8 @@
 				
 				// Create instance
 				binder = new KeyActionBinder();
-				binder.action("move-left").addKeyboardBinding(37);
-				binder.action("move-right").addKeyboardBinding(39);
+				binder.action("move-left").addKeyboardBinding(KeyActionBinder.KeyCodes.LEFT);
+				binder.action("move-right").addKeyboardBinding(KeyActionBinder.KeyCodes.RIGHT);
 				
 				window.readGamepad = function() {
 					binder.update();
@@ -63,6 +63,58 @@
 				
 				// https://developer.mozilla.org/en-US/docs/Web/Guide/API/Gamepad
 				// https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
+
+				//var gamepadSupportAvailable = navigator.getGamepads
+				/*
+				window.addEventListener("gamepadconnected", function (e) {
+					console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+					  e.gamepad.index, e.gamepad.id,
+					  e.gamepad.buttons.length, e.gamepad.axes.length);
+					// Connected: boolean,
+					// mapping: string ("standard")
+					// axes: number
+					// button: .value:number, .pressed:boolean
+					// GamepadEvent
+				});
+				*/
+
+				/*
+				window.addEventListener("gamepaddisconnected", function (e) {
+					console.log("Gamepad disconnected from index %d: %s",
+					  e.gamepad.index, e.gamepad.id);
+
+					// Note:
+					// gamepad === navigator.getGamepads()[gamepad.index]
+				});
+				*/
+
+				/*
+				gamepad.BUTTONS = {
+				  FACE_1: 0, // Face (main) buttons
+				  FACE_2: 1,
+				  FACE_3: 2,
+				  FACE_4: 3,
+				  LEFT_SHOULDER: 4, // Top shoulder buttons
+				  RIGHT_SHOULDER: 5,
+				  LEFT_SHOULDER_BOTTOM: 6, // Bottom shoulder buttons
+				  RIGHT_SHOULDER_BOTTOM: 7,
+				  SELECT: 8,
+				  START: 9,
+				  LEFT_ANALOGUE_STICK: 10, // Analogue sticks (if depressible)
+				  RIGHT_ANALOGUE_STICK: 11,
+				  PAD_TOP: 12, // Directional (discrete) pad
+				  PAD_BOTTOM: 13,
+				  PAD_LEFT: 14,
+				  PAD_RIGHT: 15
+				};
+
+				gamepad.AXES = {
+				  LEFT_ANALOGUE_HOR: 0,
+				  LEFT_ANALOGUE_VERT: 1,
+				  RIGHT_ANALOGUE_HOR: 2,
+				  RIGHT_ANALOGUE_VERT: 3
+				};
+				*/
 
 				// Setup as many action bindings as you want
 				//binder.addKeyboardActionBinding("move-left", Keyboard.LEFT);

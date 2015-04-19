@@ -27,7 +27,7 @@ module KAB {
 		}
 
 		public matchesGamepadControl(controlId: String, gamepadIndex:number): boolean {
-			return this.controlId == controlId && (this.gamepadIndex == gamepadIndex || this.gamepadIndex == KeyActionBinder.GAMEPAD_INDEX_ANY);
+			return this.controlId == controlId && (this.gamepadIndex == gamepadIndex || this.gamepadIndex == KeyActionBinder.GamepadButtons.ANY);
 		}
 	}
 }

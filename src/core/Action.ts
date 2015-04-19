@@ -38,7 +38,7 @@ module KAB {
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-		public addKeyboardBinding(keyCode:number = KeyActionBinder.KEY_CODE_ANY, keyLocation:number = KeyActionBinder.KEY_LOCATION_ANY):void {
+		public addKeyboardBinding(keyCode:number = KeyActionBinder.KeyCodes.ANY, keyLocation:number = KeyActionBinder.KeyLocations.ANY):void {
 			// TODO: check if already present?
 			this._keyboardBindings.push(new KeyboardBinding(keyCode, keyLocation));
 		}
