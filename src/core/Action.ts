@@ -14,12 +14,12 @@ module KAB {
 		private keyboardBindings:Array<KeyboardBinding>;
 		private keyboardActivated:boolean;
 		private keyboardValue:number;
+		private keyboardConsumed:boolean;
 
 		private gamepadButtonBindings:Array<GamepadButtonBinding>;
 		private gamepadButtonActivated:boolean;
 		private gamepadButtonValue:number;
-
-		private consumed:boolean;
+		private gamepadButtonConsumed:boolean;
 
 
 		// ================================================================================================================
@@ -32,12 +32,12 @@ module KAB {
 			this.keyboardBindings = [];
 			this.keyboardActivated = false;
 			this.keyboardValue = 0;
+			this.keyboardConsumed = false;
 
 			this.gamepadButtonBindings = [];
 			this.gamepadButtonActivated = false;
 			this.gamepadButtonValue = 0;
-
-			this.consumed = false;
+			this.gamepadButtonConsumed = false;
 		}
 
 
@@ -59,7 +59,8 @@ module KAB {
 		}
 
 		public consume():void {
-			if (this.activated) this.consumed = true;
+			if (this.keyboardActivated) this.keyboardConsumed = true;
+			if (this.gamepadButtonActivated) this.gamepadButtonConsumed = true;
 		}
 
 		public interpretKeyDown(keyCode:number, keyLocation:number):void {
@@ -91,7 +92,7 @@ module KAB {
 				this.keyboardActivated = isActivated;
 				this.keyboardValue = this.keyboardActivated ? 1 : 0;
 
-				if (this.keyboardActivated) this.consumed = false;
+				if (!this.keyboardActivated) this.keyboardConsumed = false;
 			}
 		}
 
@@ -114,7 +115,7 @@ module KAB {
 				this.gamepadButtonActivated = isActivated;
 				this.gamepadButtonValue = newValue;
 
-				if (this.gamepadButtonActivated) this.consumed = false;
+				if (!this.gamepadButtonActivated) this.gamepadButtonConsumed = false;
 			}
 		}
 
@@ -127,11 +128,11 @@ module KAB {
 		}
 
 		public get activated():boolean {
-			return (this.keyboardActivated || this.gamepadButtonActivated) && !this.consumed;
+			return (this.keyboardActivated && !this.keyboardConsumed) || (this.gamepadButtonActivated && !this.gamepadButtonConsumed);
 		}
 
 		public get value():number {
-			return Math.max(this.keyboardValue, this.gamepadButtonValue);
+			return Math.max(this.keyboardConsumed ? 0 : this.keyboardValue, this.gamepadButtonConsumed ? 0 : this.gamepadButtonValue);
 		}
 	}
 }
