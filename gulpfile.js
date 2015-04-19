@@ -4,6 +4,13 @@ var del = require('del');
 var uglify = require("gulp-uglify");
 var concat = require("gulp-concat");
 var sourcemaps = require('gulp-sourcemaps');
+var runSequence = require('run-sequence');
+
+// Catching errors is necessary because otherwise it causes watch to stop (and the default error handling doesn't show any information about the error)
+function logError(error) {
+    console.log("Error occurred: " + error.toString());
+    this.emit('end');
+}
 
 gulp.task('clean', function (cb) {
 	del(['build/**/*'], cb);
@@ -27,15 +34,17 @@ gulp.task('build', function() {
 
 gulp.task('minify', function () {
 	gulp.src('build/key-action-binder.js')
-		.pipe(uglify())
+		.pipe(uglify()).on('error', logError)
 		.pipe(concat('key-action-binder.min.js'))
 		.pipe(gulp.dest('build'));
 });
 
-gulp.task('rebuild', ['clean', 'build', 'minify']);
+gulp.task('rebuild', function() { 
+	runSequence('clean', 'build', 'minify');
+});
 
 gulp.task('watch', ['rebuild'], function () {
-	gulp.watch(['src/core/KeyActionBinder.ts'], ['rebuild']);
+	gulp.watch(['src/**/*.ts'], ['rebuild']);
 });
 
 gulp.task('default', ['watch']);
