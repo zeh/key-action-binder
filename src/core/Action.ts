@@ -11,12 +11,15 @@ module KAB {
 		private _id:string;
 		private _lastActivatedTime:number;
 
-		private _keyboardBindings:Array<KeyboardBinding>;
-		private _gamepadButtonBindings:Array<GamepadButtonBinding>;
+		private keyboardBindings:Array<KeyboardBinding>;
+		private keyboardActivated:boolean;
+		private keyboardValue:number;
 
-		private _activated:boolean;
-		private _consumed:boolean;
-		private _value:number;
+		private gamepadButtonBindings:Array<GamepadButtonBinding>;
+		private gamepadButtonActivated:boolean;
+		private gamepadButtonValue:number;
+
+		private consumed:boolean;
 
 
 		// ================================================================================================================
@@ -26,12 +29,15 @@ module KAB {
 			this._id = id;
 			this._lastActivatedTime = 0;
 
-			this._keyboardBindings = new Array<KeyboardBinding>();
-			this._gamepadButtonBindings = new Array<GamepadButtonBinding>();
+			this.keyboardBindings = [];
+			this.keyboardActivated = false;
+			this.keyboardValue = 0;
 
-			this._activated = false;
-			this._consumed = false;
-			this._value = 0;
+			this.gamepadButtonBindings = [];
+			this.gamepadButtonActivated = false;
+			this.gamepadButtonValue = 0;
+
+			this.consumed = false;
 		}
 
 
@@ -40,12 +46,12 @@ module KAB {
 
 		public addKeyboardBinding(keyCode:number = KeyActionBinder.KeyCodes.ANY, keyLocation:number = KeyActionBinder.KeyLocations.ANY):void {
 			// TODO: check if already present?
-			this._keyboardBindings.push(new KeyboardBinding(keyCode, keyLocation));
+			this.keyboardBindings.push(new KeyboardBinding(keyCode, keyLocation));
 		}
 
 		public addGamepadButtonBinding(buttonCode:number = KeyActionBinder.GamepadButtons.ANY, gamepadLocation:number = KeyActionBinder.GamepadLocations.ANY):void {
 			// TODO: check if already present?
-			this._gamepadButtonBindings.push(new GamepadButtonBinding(buttonCode, gamepadLocation));
+			this.gamepadButtonBindings.push(new GamepadButtonBinding(buttonCode, gamepadLocation));
 		}
 
 		public addGamepadBinding():void {
@@ -53,52 +59,63 @@ module KAB {
 		}
 
 		public consume():void {
-			if (this._activated) this._consumed = true;
+			if (this.activated) this.consumed = true;
 		}
 
 		public interpretKeyDown(keyCode:number, keyLocation:number):void {
-			for (var i:number = 0; i < this._keyboardBindings.length; i++) {
-				if (!this._keyboardBindings[i].isActivated && this._keyboardBindings[i].matchesKeyboardKey(keyCode, keyLocation)) {
+			for (var i:number = 0; i < this.keyboardBindings.length; i++) {
+				if (!this.keyboardBindings[i].isActivated && this.keyboardBindings[i].matchesKeyboardKey(keyCode, keyLocation)) {
 					// Activated
-					this._keyboardBindings[i].isActivated = true;
-					this._activated = true;
+					this.keyboardBindings[i].isActivated = true;
+					this.keyboardActivated = true;
+					this.keyboardValue = 1;
 				}
 			}
-			this._value = this._activated ? 1 : 0;
 		}
 
 		public interpretKeyUp(keyCode:number, keyLocation:number):void {
+			var hasMatch:boolean;
 			var isActivated:boolean = false;
-			for (var i:number = 0; i < this._keyboardBindings.length; i++) {
-				if (this._keyboardBindings[i].isActivated && this._keyboardBindings[i].matchesKeyboardKey(keyCode, keyLocation)) {
-					// Deactivated
-					this._keyboardBindings[i].isActivated = false;
+			for (var i:number = 0; i < this.keyboardBindings.length; i++) {
+				if (this.keyboardBindings[i].matchesKeyboardKey(keyCode, keyLocation)) {
+					if (this.keyboardBindings[i].isActivated) {
+						// Deactivated
+						this.keyboardBindings[i].isActivated = false;
+					}
+					hasMatch = true;
+					isActivated = isActivated || this.keyboardBindings[i].isActivated;
 				}
-				isActivated = isActivated || this._keyboardBindings[i].isActivated;
 			}
-			// TODO: also check gamepads for activation
-			this._activated = isActivated;
-			this._value = this._activated ? 1 : 0;
-			if (this._activated) this._consumed = false; // TODO: make this more self-contained
+
+			if (hasMatch) {
+				this.keyboardActivated = isActivated;
+				this.keyboardValue = this.keyboardActivated ? 1 : 0;
+
+				if (this.keyboardActivated) this.consumed = false;
+			}
 		}
 
 		public interpretGamepadButton(buttonCode:number, gamepadLocation:number, pressedState:boolean, valueState:number):void {
+			var hasMatch:boolean;
 			var isActivated:boolean = false;
 			var newValue:number = 0;
-			for (var i:number = 0; i < this._gamepadButtonBindings.length; i++) {
-				if (this._gamepadButtonBindings[i].matchesGamepadButton(buttonCode, gamepadLocation)) {
-					this._gamepadButtonBindings[i].isActivated = pressedState;
-					this._gamepadButtonBindings[i].value = valueState;
+			for (var i:number = 0; i < this.gamepadButtonBindings.length; i++) {
+				if (this.gamepadButtonBindings[i].matchesGamepadButton(buttonCode, gamepadLocation)) {
+					hasMatch = true;
+					this.gamepadButtonBindings[i].isActivated = pressedState;
+					this.gamepadButtonBindings[i].value = valueState;
 
 					isActivated = isActivated || pressedState;
 					if (valueState > newValue) newValue = valueState;
 				}
 			}
 
-			// TODO: combine this with keyboatd state
-			this._activated = isActivated;
-			this._value = newValue;
-			if (this._activated) this._consumed = false; // TODO: make this more self-contained
+			if (hasMatch) {
+				this.gamepadButtonActivated = isActivated;
+				this.gamepadButtonValue = newValue;
+
+				if (this.gamepadButtonActivated) this.consumed = false;
+			}
 		}
 
 
@@ -110,11 +127,11 @@ module KAB {
 		}
 
 		public get activated():boolean {
-			return this._activated && !this._consumed;
+			return (this.keyboardActivated || this.gamepadButtonActivated) && !this.consumed;
 		}
 
 		public get value():number {
-			return this._value;
+			return Math.max(this.keyboardValue, this.gamepadButtonValue);
 		}
 	}
 }

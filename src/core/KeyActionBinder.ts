@@ -292,6 +292,7 @@ class KeyActionBinder {
 					// Interpret all buttons
 					action = this.actions[iis];
 					for (j = 0; j < gamepad.buttons.length; j++) {
+						//if (j == KeyActionBinder.GamepadButtons.PAD_LEFT) console.log("interpreting ", j, "/", gamepad.buttons.length, i, gamepad.buttons[j].pressed, gamepad.buttons[j].value);
 						action.interpretGamepadButton(j, i, gamepad.buttons[j].pressed, gamepad.buttons[j].value);
 					}
 				}
