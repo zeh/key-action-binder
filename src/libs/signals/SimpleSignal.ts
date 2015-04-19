@@ -19,7 +19,6 @@ module zehfernando.signals {
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
 		constructor() {
-			this.functions = [];
 		}
 
 
