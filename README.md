@@ -41,7 +41,7 @@ Notice: this is still under development. It is based on my original [KeyActionBi
 		}
 		
 		// Check whether an action should be performed
-		if (binder.action("jump").activated) {
+		if (playerIsOnGround && binder.action("jump").activated) {
 			// Perform jump...
 
 			// Consume the action, so the player has to press jump again to perform another jump
@@ -69,7 +69,7 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Interpret gamepad axes
  * Proper documentation
  * Allow detecting "any" gamepad/keyboard key (for "press any key")
- * Allow complex sequence bindings (hadouken, etc)
+ * Allow complex sequence bindings with timing constraints (hadouken, etc)
  * More profiling and testing performance/bottlenecks/memory allocations (http://www.html5rocks.com/en/tutorials/webperformance/usertiming/)
  * Better demos
  * Test support for 2+ controllers

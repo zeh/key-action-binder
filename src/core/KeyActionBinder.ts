@@ -11,7 +11,7 @@
 class KeyActionBinder {
 
 	// Constants
-	public static VERSION:String = "0.0.0";
+	public static VERSION:String = "1.0.0";
 
 	// Enums (Internal)
 	public static KeyCodes = {
