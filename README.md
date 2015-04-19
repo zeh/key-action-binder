@@ -65,3 +65,4 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Profile and test performance/bottlenecks/memory allocations
  * Better demos
  * Test support for 2+ controllers
+ * Automated tests/profiling (http://www.html5rocks.com/en/tutorials/webperformance/usertiming/)
