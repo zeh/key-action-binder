@@ -44,18 +44,16 @@ module KAB {
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-		public addKeyboardBinding(keyCode:number = KeyActionBinder.KeyCodes.ANY, keyLocation:number = KeyActionBinder.KeyLocations.ANY):void {
+		public addKeyboardBinding(keyCode:number = KeyActionBinder.KeyCodes.ANY, keyLocation:number = KeyActionBinder.KeyLocations.ANY):Action {
 			// TODO: check if already present?
 			this.keyboardBindings.push(new KeyboardBinding(keyCode, keyLocation));
+			return this;
 		}
 
-		public addGamepadButtonBinding(buttonCode:number = KeyActionBinder.GamepadButtons.ANY, gamepadLocation:number = KeyActionBinder.GamepadLocations.ANY):void {
+		public addGamepadButtonBinding(buttonCode:number = KeyActionBinder.GamepadButtons.ANY, gamepadLocation:number = KeyActionBinder.GamepadLocations.ANY):Action {
 			// TODO: check if already present?
 			this.gamepadButtonBindings.push(new GamepadButtonBinding(buttonCode, gamepadLocation));
-		}
-
-		public addGamepadBinding():void {
-			console.error("Action.addGamepadBinding() not implemented yet");
+			return this;
 		}
 
 		public consume():void {

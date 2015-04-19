@@ -46,11 +46,13 @@
 				binder = new KeyActionBinder();
 				binder.action("move-left").addKeyboardBinding(KeyActionBinder.KeyCodes.LEFT);
 				binder.action("move-right").addKeyboardBinding(KeyActionBinder.KeyCodes.RIGHT);
-				binder.action("jump").addKeyboardBinding(KeyActionBinder.KeyCodes.SPACE);
 				
+				binder.action("jump")
+					.addKeyboardBinding(KeyActionBinder.KeyCodes.SPACE)
+					.addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_DOWN);
+
 				binder.action("move-left").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.DPAD_LEFT);
 				binder.action("move-right").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.DPAD_RIGHT);
-				binder.action("jump").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_DOWN);
 				binder.action("fire").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.LEFT_SHOULDER_BOTTOM);
 				binder.action("au").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_UP);
 				binder.action("al").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_LEFT);
