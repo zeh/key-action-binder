@@ -356,27 +356,27 @@ class KeyActionBinder {
 	public updateGamepadsState():void {
 		//console.time("check");
 
+		// TODO: this takes about 4% of total frame time (more or less 1ms), but it is still the largest bottleneck - optimize calls later where possible
+
 		// Check all buttons of all gamepads
 		var gamepads = navigator.getGamepads();
 		var gamepad:Gamepad;
 		var i:number, j:number;
-		var action:KAB.Action;
 		for (i = 0; i < gamepads.length; i++) {
 			gamepad = gamepads[i];
 			if (gamepad != null) {
-				// Run it through all actions
+				// All actions...
 				for (var iis in this.actions) {
-					// Interpret all buttons
-					action = this.actions[iis];
+					// ...interpret all buttons
 					for (j = 0; j < gamepad.buttons.length; j++) {
-						//if (j == KeyActionBinder.GamepadButtons.PAD_LEFT) console.log("interpreting ", j, "/", gamepad.buttons.length, i, gamepad.buttons[j].pressed, gamepad.buttons[j].value);
-						action.interpretGamepadButton(j, i, gamepad.buttons[j].pressed, gamepad.buttons[j].value);
+						this.actions[iis].interpretGamepadButton(j, i, gamepad.buttons[j].pressed, gamepad.buttons[j].value);
 					}
 				}
 			}
 		}
 
 		this.lastFrameGamepadsChecked = this.currentFrame;
+
 		//console.timeEnd("check");
 	}
 
