@@ -1,16 +1,22 @@
 var gulp = require('gulp');
 var ts = require('gulp-typescript');
 var del = require('del');
-var uglify = require("gulp-uglify");
-var concat = require("gulp-concat");
+var uglify = require('gulp-uglify');
+var concat = require('gulp-concat');
 var sourcemaps = require('gulp-sourcemaps');
 var runSequence = require('run-sequence');
+var sloc = require('gulp-sloc');
 
 // Catching errors is necessary because otherwise it causes watch to stop (and the default error handling doesn't show any information about the error)
 function logError(error) {
     console.log("Error occurred: " + error.toString());
     this.emit('end');
 }
+
+gulp.task('stats', function (cb) {
+	gulp.src(['build/key-action-binder.js'])
+		.pipe(sloc());
+});
 
 gulp.task('clean', function (cb) {
 	return del(['build/**/*'], cb);
