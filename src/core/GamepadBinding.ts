@@ -1,11 +1,10 @@
-﻿/// <reference path="IBinding.ts" />
-/// <reference path="KeyActionBinder.ts" />
+﻿/// <reference path="KeyActionBinder.ts" />
 
 module KAB {
 	/**
 	 * Information on a gamepad event filter
 	 */
-	export class GamepadBinding implements IBinding {
+	export class GamepadBinding {
 
 		// Properties
 		public controlId:string;

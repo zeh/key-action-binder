@@ -1,21 +1,20 @@
-﻿/// <reference path="IBinding.ts" />
-/// <reference path="KeyActionBinder.ts" />
+﻿/// <reference path="KeyActionBinder.ts" />
 
 module KAB {
 	/**
 	 * Information on a keyboard event filter
 	 */
-	export class KeyboardBinding implements IBinding {
+	export class KeyboardBinding {
 
 		// Properties
-		public keyCode:string;
+		public keyCode:number;
 		public keyLocation:number;
 
 
 		// ================================================================================================================
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
-		constructor(keyCode:string, keyLocation:number) {
+		constructor(keyCode:number, keyLocation:number) {
 			this.keyCode = keyCode;
 			this.keyLocation = keyLocation;
 		}
@@ -23,7 +22,7 @@ module KAB {
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-		public matchesKeyboardKey(keyCode:string, keyLocation:number): boolean {
+		public matchesKeyboardKey(keyCode:number, keyLocation:number): boolean {
 			return (this.keyCode == keyCode || this.keyCode == KeyActionBinder.KEY_CODE_ANY) && (this.keyLocation == keyLocation || this.keyLocation == KeyActionBinder.KEY_LOCATION_ANY);
 		}
 
