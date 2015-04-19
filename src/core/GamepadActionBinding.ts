@@ -4,7 +4,7 @@ module KAB {
 	/**
 	 * Information on a gamepad event filter
 	 */
-	export class GamepadButtonBinding {
+	export class GamepadActionBinding {
 
 		// Properties
 		public buttonCode:number;

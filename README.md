@@ -23,13 +23,16 @@ Notice: this is still under development. It is based on my original [KeyActionBi
 	binder = new KeyActionBinder();
 	
 	// Setup as many action bindings as you want
-	binder.action("move-left").addKeyboardBinding(KeyActionBinder.KeyCodes.LEFT);
-	binder.action("move-right").addKeyboardBinding(KeyActionBinder.KeyCodes.RIGHT);
-	binder.action("move-left").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.DPAD_LEFT);
-	binder.action("move-right").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.DPAD_RIGHT);
-	
-	binder.action("jump").addKeyboardBinding(KeyActionBinder.KeyCodes.SPACE);
-	binder.action("jump").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_DOWN);
+	binder.action("move-left").bindKeyboard(KeyActionBinder.KeyCodes.LEFT);
+	binder.action("move-right").bindKeyboard(KeyActionBinder.KeyCodes.RIGHT);
+	binder.action("move-left").bindGamepad(KeyActionBinder.GamepadButtons.DPAD_LEFT);
+	binder.action("move-right").bindGamepad(KeyActionBinder.GamepadButtons.DPAD_RIGHT);
+
+	// Actions can be chained for simpler use
+	binder.action("jump")
+		.bindKeyboard(KeyActionBinder.KeyCodes.SPACE)
+		.bindGamepad(KeyActionBinder.GamepadButtons.ACTION_DOWN)
+		.setTolerance(0.3); // Set the tolerance for an action; to prevent a player from hitting the jump button while still in the air, for example
 
 	// Evaluate actions in the game loop
 	function myGameLoop() {

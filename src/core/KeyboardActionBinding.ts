@@ -4,7 +4,7 @@ module KAB {
 	/**
 	 * Information on a keyboard event filter
 	 */
-	export class KeyboardBinding {
+	export class KeyboardActionBinding {
 
 		// Properties
 		public keyCode:number;

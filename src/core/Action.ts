@@ -1,5 +1,5 @@
-﻿/// <reference path="KeyboardBinding.ts" />
-/// <reference path="GamepadButtonBinding.ts" />
+﻿/// <reference path="KeyboardActionBinding.ts" />
+/// <reference path="GamepadActionBinding.ts" />
 
 module KAB {
 	/**
@@ -11,12 +11,12 @@ module KAB {
 		private _id:string;
 		private lastActivatedTime:number;
 
-		private keyboardBindings:Array<KeyboardBinding>;
+		private keyboardBindings:Array<KeyboardActionBinding>;
 		private keyboardActivated:boolean;
 		private keyboardValue:number;
 		private keyboardConsumed:boolean;
 
-		private gamepadButtonBindings:Array<GamepadButtonBinding>;
+		private gamepadButtonBindings:Array<GamepadActionBinding>;
 		private gamepadButtonActivated:boolean;
 		private gamepadButtonValue:number;
 		private gamepadButtonConsumed:boolean;
@@ -47,15 +47,15 @@ module KAB {
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-		public addKeyboardBinding(keyCode:number = KeyActionBinder.KeyCodes.ANY, keyLocation:number = KeyActionBinder.KeyLocations.ANY):Action {
+		public bindKeyboard(keyCode:number = KeyActionBinder.KeyCodes.ANY, keyLocation:number = KeyActionBinder.KeyLocations.ANY):Action {
 			// TODO: check if already present?
-			this.keyboardBindings.push(new KeyboardBinding(keyCode, keyLocation));
+			this.keyboardBindings.push(new KeyboardActionBinding(keyCode, keyLocation));
 			return this;
 		}
 
-		public addGamepadButtonBinding(buttonCode:number = KeyActionBinder.GamepadButtons.ANY, gamepadLocation:number = KeyActionBinder.GamepadLocations.ANY):Action {
+		public bindGamepad(buttonCode:number = KeyActionBinder.GamepadButtons.ANY, gamepadLocation:number = KeyActionBinder.GamepadLocations.ANY):Action {
 			// TODO: check if already present?
-			this.gamepadButtonBindings.push(new GamepadButtonBinding(buttonCode, gamepadLocation));
+			this.gamepadButtonBindings.push(new GamepadActionBinding(buttonCode, gamepadLocation));
 			return this;
 		}
 

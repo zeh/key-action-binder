@@ -170,13 +170,13 @@ class KeyActionBinder {
 	private _onDevicesChanged:zehfernando.signals.SimpleSignal<{()}>;
 	private _onRecentDeviceChanged:zehfernando.signals.SimpleSignal<{(gamepad:Gamepad)}>; // TODO: use a Gamepad wrapper?
 
-	private bindCache:any; // Should have been "{ [index: Function]: Function }", but that's not allowed.. maybe create a separate class later
+	private bindCache:any;																			// Should have been "{ [index: Function]: Function }", but that's not allowed.. maybe create a separate class later
 
 	private currentFrame:number;																	// Used to count update checks
 	private lastFrameGamepadsChecked:number;														// Last frame where gamepad input was checked
 
 	// TODO:
-	// * Check navigator.getGamepads to see if gamepads are actually accessible
+	// * Check navigator.getGamepads to see if gamepads are actually accessible without breaking
 
 
 	// ================================================================================================================
@@ -266,17 +266,11 @@ class KeyActionBinder {
 	 * Gets an action instance, creating it if necessary
 	 */
 	public action(id:string):KAB.Action {
-		// Get an action, creating it if necessary
+		// Check gamepad state
+		if (this.lastFrameGamepadsChecked < this.currentFrame) this.updateGamepadsState();
 
-		if (this.lastFrameGamepadsChecked < this.currentFrame) {
-			// Need to re-check gamepad state
-			this.updateGamepadsState();
-		}
-
-		if (!this.actions.hasOwnProperty(id)) {
-			// Need to be created first!
-			this.actions[id] = new KAB.Action(id);
-		}
+		// Create Action first if needed
+		if (!this.actions.hasOwnProperty(id)) this.actions[id] = new KAB.Action(id);
 
 		return this.actions[id];
 	}

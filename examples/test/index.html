@@ -44,20 +44,20 @@
 				
 				// Create instance
 				binder = new KeyActionBinder();
-				binder.action("move-left").addKeyboardBinding(KeyActionBinder.KeyCodes.LEFT);
-				binder.action("move-right").addKeyboardBinding(KeyActionBinder.KeyCodes.RIGHT);
+				binder.action("move-left").bindKeyboard(KeyActionBinder.KeyCodes.LEFT);
+				binder.action("move-right").bindKeyboard(KeyActionBinder.KeyCodes.RIGHT);
 				
 				binder.action("jump")
 					.setTolerance(0.3)
-					.addKeyboardBinding(KeyActionBinder.KeyCodes.SPACE)
-					.addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_DOWN);
+					.bindKeyboard(KeyActionBinder.KeyCodes.SPACE)
+					.bindGamepad(KeyActionBinder.GamepadButtons.ACTION_DOWN);
 
-				binder.action("move-left").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.DPAD_LEFT);
-				binder.action("move-right").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.DPAD_RIGHT);
-				binder.action("fire").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.LEFT_SHOULDER_BOTTOM);
-				binder.action("au").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_UP);
-				binder.action("al").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_LEFT);
-				binder.action("ar").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_RIGHT);
+				binder.action("move-left").bindGamepad(KeyActionBinder.GamepadButtons.DPAD_LEFT);
+				binder.action("move-right").bindGamepad(KeyActionBinder.GamepadButtons.DPAD_RIGHT);
+				binder.action("fire").bindGamepad(KeyActionBinder.GamepadButtons.LEFT_SHOULDER_BOTTOM);
+				binder.action("au").bindGamepad(KeyActionBinder.GamepadButtons.ACTION_UP);
+				binder.action("al").bindGamepad(KeyActionBinder.GamepadButtons.ACTION_LEFT);
+				binder.action("ar").bindGamepad(KeyActionBinder.GamepadButtons.ACTION_RIGHT);
 				
 				window.readGamepad = function() {
 					requestAnimationFrame(window.readGamepad);
