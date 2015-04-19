@@ -47,6 +47,9 @@
 				binder.action("move-left").addKeyboardBinding(KeyActionBinder.KeyCodes.LEFT);
 				binder.action("move-right").addKeyboardBinding(KeyActionBinder.KeyCodes.RIGHT);
 				
+				binder.action("move-left").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.PAD_LEFT);
+				binder.action("move-right").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.PAD_RIGHT);
+				
 				window.readGamepad = function() {
 					binder.update();
 					requestAnimationFrame(window.readGamepad);

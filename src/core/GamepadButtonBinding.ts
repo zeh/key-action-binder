@@ -2,33 +2,33 @@
 
 module KAB {
 	/**
-	 * Information on a keyboard event filter
+	 * Information on a gamepad event filter
 	 */
-	export class KeyboardBinding {
+	export class GamepadButtonBinding {
 
 		// Properties
-		public keyCode:number;
-		public keyLocation:number;
+		public buttonCode:number;
+		public gamepadLocation:number;
 
 		public isActivated:boolean;
+		public value:number;
 
 
 		// ================================================================================================================
 		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
-		constructor(keyCode:number, keyLocation:number) {
-			this.keyCode = keyCode;
-			this.keyLocation = keyLocation;
+		constructor(buttonCode:number, gamepadLocation:number) {
+			this.buttonCode = buttonCode;
+			this.gamepadLocation = gamepadLocation;
 			this.isActivated = false;
+			this.value = 0;
 		}
-
 
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-		// TODO: add modifiers?
-		public matchesKeyboardKey(keyCode:number, keyLocation:number):boolean {
-			return (this.keyCode == keyCode || this.keyCode == KeyActionBinder.KeyCodes.ANY) && (this.keyLocation == keyLocation || this.keyLocation == KeyActionBinder.KeyLocations.ANY);
+		public matchesGamepadButton(buttonCode:number, gamepadLocation:number):boolean {
+			return (this.buttonCode == buttonCode || this.buttonCode == KeyActionBinder.GamepadButtons.ANY) && (this.gamepadLocation == gamepadLocation || this.gamepadLocation == KeyActionBinder.GamepadLocations.ANY);
 		}
 	}
 }

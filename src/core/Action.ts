@@ -1,5 +1,5 @@
 ﻿/// <reference path="KeyboardBinding.ts" />
-/// <reference path="GamepadBinding.ts" />
+/// <reference path="GamepadButtonBinding.ts" />
 
 module KAB {
 	/**
@@ -12,7 +12,7 @@ module KAB {
 		private _lastActivatedTime:number;
 
 		private _keyboardBindings:Array<KeyboardBinding>;
-		private _gamepadBindings:Array<GamepadBinding>;
+		private _gamepadButtonBindings:Array<GamepadButtonBinding>;
 
 		private _activated:boolean;
 		private _consumed:boolean;
@@ -27,7 +27,7 @@ module KAB {
 			this._lastActivatedTime = 0;
 
 			this._keyboardBindings = new Array<KeyboardBinding>();
-			this._gamepadBindings = new Array<GamepadBinding>();
+			this._gamepadButtonBindings = new Array<GamepadButtonBinding>();
 
 			this._activated = false;
 			this._consumed = false;
@@ -41,6 +41,11 @@ module KAB {
 		public addKeyboardBinding(keyCode:number = KeyActionBinder.KeyCodes.ANY, keyLocation:number = KeyActionBinder.KeyLocations.ANY):void {
 			// TODO: check if already present?
 			this._keyboardBindings.push(new KeyboardBinding(keyCode, keyLocation));
+		}
+
+		public addGamepadButtonBinding(buttonCode:number = KeyActionBinder.GamepadButtons.ANY, gamepadLocation:number = KeyActionBinder.GamepadLocations.ANY):void {
+			// TODO: check if already present?
+			this._gamepadButtonBindings.push(new GamepadButtonBinding(buttonCode, gamepadLocation));
 		}
 
 		public addGamepadBinding():void {
@@ -74,6 +79,25 @@ module KAB {
 			// TODO: also check gamepads for activation
 			this._activated = isActivated;
 			this._value = this._activated ? 1 : 0;
+			if (this._activated) this._consumed = false; // TODO: make this more self-contained
+		}
+
+		public interpretGamepadButton(buttonCode:number, gamepadLocation:number, pressedState:boolean, valueState:number):void {
+			var isActivated:boolean = false;
+			var newValue:number = 0;
+			for (var i:number = 0; i < this._gamepadButtonBindings.length; i++) {
+				if (this._gamepadButtonBindings[i].matchesGamepadButton(buttonCode, gamepadLocation)) {
+					this._gamepadButtonBindings[i].isActivated = pressedState;
+					this._gamepadButtonBindings[i].value = valueState;
+
+					isActivated = isActivated || pressedState;
+					if (valueState > newValue) newValue = valueState;
+				}
+			}
+
+			// TODO: combine this with keyboatd state
+			this._activated = isActivated;
+			this._value = newValue;
 			if (this._activated) this._consumed = false; // TODO: make this more self-contained
 		}
 
