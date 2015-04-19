@@ -170,7 +170,10 @@ class KeyActionBinder {
 	private _onDevicesChanged:zehfernando.signals.SimpleSignal<{()}>;
 	private _onRecentDeviceChanged:zehfernando.signals.SimpleSignal<{(gamepad:Gamepad)}>; // TODO: use a Gamepad wrapper?
 
-	private bindCache: any; // Should have been "{ [index: Function]: Function }", but that's not allowed.. maybe create a separate class later
+	private bindCache:any; // Should have been "{ [index: Function]: Function }", but that's not allowed.. maybe create a separate class later
+
+	private currentFrame:number;																	// Used to count update checks
+	private lastFrameGamepadsChecked:number;														// Last frame where gamepad input was checked
 
 	// TODO:
 	// * Check navigator.getGamepads to see if gamepads are actually accessible
@@ -191,6 +194,9 @@ class KeyActionBinder {
 		this._onActionValueChanged = new zehfernando.signals.SimpleSignal<{(action:string, value:number)}>();
 		this._onDevicesChanged = new zehfernando.signals.SimpleSignal<{()}>();
 		this._onRecentDeviceChanged = new zehfernando.signals.SimpleSignal<{(gamepad:Gamepad)}>();
+
+		this.currentFrame = 0;
+		this.lastFrameGamepadsChecked = 0;
 
 		this.start();
 	}
@@ -223,6 +229,8 @@ class KeyActionBinder {
 			this.refreshGamepadList();
 
 			this._isRunning = true;
+
+			this.incrementFrameCount();
 		}
 	}
 
@@ -254,47 +262,23 @@ class KeyActionBinder {
 		}
 	}
 
+	/**
+	 * Gets an action instance, creating it if necessary
+	 */
 	public action(id:string):KAB.Action {
 		// Get an action, creating it if necessary
+
+		if (this.lastFrameGamepadsChecked < this.currentFrame) {
+			// Need to re-check gamepad state
+			this.updateGamepadsState();
+		}
+
 		if (!this.actions.hasOwnProperty(id)) {
 			// Need to be created first!
 			this.actions[id] = new KAB.Action(id);
 		}
 
 		return this.actions[id];
-	}
-
-	/**
-	 * Update the known state of all buttons/axis
-	 */
-	public update():void {
-		// TODO: check controls to see if any has changed
-		// TODO: move this outside? make it automatic (with requestAnimationFrame), or make it be called once per frame when any action is checked
-
-		//console.time("check");
-
-		// Check all buttons of all gamepads
-		var gamepads = navigator.getGamepads();
-		var gamepad:Gamepad;
-		var i:number, j:number;
-		var action:KAB.Action;
-		for (i = 0; i < gamepads.length; i++) {
-			gamepad = gamepads[i];
-			if (gamepad != null) {
-				// Run it through all actions
-				for (var iis in this.actions) {
-					// Interpret all buttons
-					action = this.actions[iis];
-					for (j = 0; j < gamepad.buttons.length; j++) {
-						//if (j == KeyActionBinder.GamepadButtons.PAD_LEFT) console.log("interpreting ", j, "/", gamepad.buttons.length, i, gamepad.buttons[j].pressed, gamepad.buttons[j].value);
-						action.interpretGamepadButton(j, i, gamepad.buttons[j].pressed, gamepad.buttons[j].value);
-					}
-				}
-			}
-		}
-
-		//console.timeEnd("check");
-		
 	}
 
 
@@ -358,6 +342,43 @@ class KeyActionBinder {
 
 	// ================================================================================================================
 	// PRIVATE INTERFACE ----------------------------------------------------------------------------------------------
+
+	private incrementFrameCount():void {
+		if (this._isRunning) {
+			this.currentFrame++;
+			window.requestAnimationFrame(this.incrementFrameCount.bind(this));
+		}
+	}
+
+	/**
+	 * Update the known state of all buttons/axis
+	 */
+	public updateGamepadsState():void {
+		//console.time("check");
+
+		// Check all buttons of all gamepads
+		var gamepads = navigator.getGamepads();
+		var gamepad:Gamepad;
+		var i:number, j:number;
+		var action:KAB.Action;
+		for (i = 0; i < gamepads.length; i++) {
+			gamepad = gamepads[i];
+			if (gamepad != null) {
+				// Run it through all actions
+				for (var iis in this.actions) {
+					// Interpret all buttons
+					action = this.actions[iis];
+					for (j = 0; j < gamepad.buttons.length; j++) {
+						//if (j == KeyActionBinder.GamepadButtons.PAD_LEFT) console.log("interpreting ", j, "/", gamepad.buttons.length, i, gamepad.buttons[j].pressed, gamepad.buttons[j].value);
+						action.interpretGamepadButton(j, i, gamepad.buttons[j].pressed, gamepad.buttons[j].value);
+					}
+				}
+			}
+		}
+
+		this.lastFrameGamepadsChecked = this.currentFrame;
+		//console.timeEnd("check");
+	}
 
 	private refreshGamepadList():void {
 		// The list of game devices has changed

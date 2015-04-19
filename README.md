@@ -29,10 +29,8 @@ Notice: this is still under development. It is based on my original [KeyActionBi
 	binder.action("move-right").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.DPAD_RIGHT);
 
 	// Evaluate actions in the game loop
-	function gameLoop() {
-		// This is needed to reinterpret gamepad state; should be automatic in the future
-		binder.update();
-
+	function myGameLoop() {
+		// Check whether the player should move
 		if (binder.action("move-left").activated) {
 			// ...
 		} else if (binder.action("move-right").activated) {
@@ -57,7 +55,6 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 
 ## To-do
 
- * Automatic update()
  * Interpret gamepad axes
  * Proper documentation
  * Better naming for gamepad buttons

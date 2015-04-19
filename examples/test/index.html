@@ -57,7 +57,6 @@
 				binder.action("ar").addGamepadButtonBinding(KeyActionBinder.GamepadButtons.ACTION_RIGHT);
 				
 				window.readGamepad = function() {
-					binder.update();
 					requestAnimationFrame(window.readGamepad);
 					
 					var txt = "";
