@@ -13,11 +13,11 @@ function logError(error) {
 }
 
 gulp.task('clean', function (cb) {
-	del(['build/**/*'], cb);
+	return del(['build/**/*'], cb);
 });
 
 gulp.task('build', function() {
-	gulp.src('src/core/KeyActionBinder.ts')
+	return gulp.src('src/core/KeyActionBinder.ts')
 		.pipe(sourcemaps.init())
 		.pipe(ts({
 			declarationFiles: true,
@@ -33,9 +33,9 @@ gulp.task('build', function() {
 });
 
 gulp.task('minify', function () {
-	gulp.src('build/key-action-binder.js')
-		.pipe(uglify()).on('error', logError)
+	return gulp.src('build/key-action-binder.js')
 		.pipe(concat('key-action-binder.min.js'))
+		.pipe(uglify()).on('error', logError)
 		.pipe(gulp.dest('build'));
 });
 
