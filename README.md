@@ -30,11 +30,12 @@ Notice: this is still under development. It is based on my original [KeyActionBi
 
 	// Evaluate actions in the game loop
 	function gameLoop() {
+		// This is needed to reinterpret gamnepad state; should be automatic in the future
 		binder.update();
 
 		if (binder.action("move-left").activated) {
 			// ...
-		} else if (binder.action("move-right"),activated) {
+		} else if (binder.action("move-right").activated) {
 			// ...
 		}
 	}
@@ -56,6 +57,7 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 
 ## To-do
 
+ * Automatic update()
  * Interpret gamepad axes
  * Proper documentation
  * Better naming for gamepad buttons
