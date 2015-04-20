@@ -4,16 +4,18 @@ KeyActionBinder tries to provide universal game input control for both keyboard 
 
 While the browser already provides all the means for using keyboard and game input (via the [KeyboardEvent](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/KeyboardEvent) and [Gamepad](https://developer.mozilla.org/en-US/docs/Web/Guide/API/Gamepad) APIs), KeyActionBinder tries to abstract those classes behind a straightforward, higher-level interface. It is meant to be simple but powerful, while solving some of the most common pitfalls involved with player input in JavaScript-based games.
 
-Notice: this is still under development. It is based on my original [KeyActionBinder ActionScript library](https://github.com/zeh/key-action-binder), although with a different interface.
+Notice: this is still under development. It is based on my original [KeyActionBinder ActionScript library](https://github.com/zeh/key-action-binder), although with a different interface (and more features).
 
 
 ## Goals
 
- * Unified interface for keyboard and game controller input
- * Made to be fast: memory allocation is kept to a minimum, with no device references or instances to maintain
- * Abstract actual controls in favor of action ids: easier to configure key bindings through variables, with redundant input types (keyboard and gamepad)
- * Automatic bindings on any platform by working around browser limitations
- * Self-containment and independence from any other system or framework
+ * Having a clear, easy to use interface
+ * Making the game loop code as small as possible by wrapping actual gamepad and keyboard input logic behind action and axis string ids (created at setup)
+ * Allowing easy setup of typical game-like functionality such as button press time tolerance, axis transition speeds, dead zone protection, etc
+ * Having no device or control references to maintain or store
+ * Working around browser limitations where appropriate (and possible) to provide a consistent experience
+ * Self-containment and independence from any other system, framework, or game engine
+ * Auto-management of gamepad order for sensible party/multi-player support
 
 ## Usage
 
@@ -64,7 +66,7 @@ Actions can be "consumed" so they only work once when pressed:
 		if (playerIsOnGround && binder.action("jump").activated) {
 			// (...code for performing jump...)
 
-			// Consume the action, so the player has to press jump again to perform another jump (rather than keep it pressed)
+			// Make sure the player has to release and press jump again to perform another jump
 			binder.action("jump").consume();
 		}
 	}
@@ -77,7 +79,7 @@ You can also use the axis for movements, including simulating an axis with keybo
 		.bindKeyboard(KeyActionBinder.KeyCodes.LEFT, KeyActionBinder.KeyCodes.RIGHT);
 		
 	function myGameLoop() {
-		var speedScaleX = binder.axis("move-x").value; // Value will be a value between -1 and 1
+		var speedScaleX = binder.axis("move-x").value; // Value will be a number between -1 and 1
 		player.x += speedScaleX * maximumSpeed;
 	}
 
@@ -99,8 +101,10 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 ## To-do
 
  * Test:
-  * support for 2+ controllers
-  * Actions bound to several different keys/gamepad buttons at the same time
+   * support for 2+ controllers
+   * Actions bound to several different keys/gamepad buttons at the same time
+   * If maintainPlayerPositions is necessary
+
    
  * Axis-simulating gamepad button binds (like keyboard axis)
  * Proper documentation
@@ -108,6 +112,9 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Allow complex sequence bindings with timing constraints (hadouken, etc)
  * More profiling and testing performance/bottlenecks/memory allocations (http://www.html5rocks.com/en/tutorials/webperformance/usertiming/)
  * Better demos
+ * Expose recent device
+ * Check navigator.getGamepads to see if gamepads are actually accessible without breaking
  * Automated tests
  * Allow key combinations (modifiers)?
  * Add a fast path for gamepad status checking?
+ * Something for "duration" of an action? so the player can do stronger/longer jumps, etc

@@ -177,9 +177,6 @@ class KeyActionBinder {
 	private currentFrame:number;																	// Used to count update checks
 	private lastFrameGamepadsChecked:number;														// Last frame where gamepad input was checked
 
-	// TODO:
-	// * Check navigator.getGamepads to see if gamepads are actually accessible without breaking
-
 
 	// ================================================================================================================
 	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
@@ -412,7 +409,7 @@ class KeyActionBinder {
 		// The list of game devices has changed
 
 		// TODO: implement _maintainPlayerPositions ? Apparently the browser already does something like that...
-		console.log("List of gamepads refreshed, new list = " + navigator.getGamepads().length + " items");
+		//console.log("List of gamepads refreshed, new list = " + navigator.getGamepads().length + " items");
 
 		// Dispatch the signal
 		this._onDevicesChanged.dispatch();
