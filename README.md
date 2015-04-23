@@ -105,11 +105,14 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
    * Actions bound to several different keys/gamepad buttons at the same time
    * If maintainPlayerPositions is necessary
 
-   
+ * Allow complex sequence bindings with timing constraints (hadouken, etc)
+   * Certain commands in the sequence should be interchangeable (http://wiki.shoryuken.com/The_King_of_Fighters_XIII/Game_Elements/Command_Interpreter)
+   * Leniency for simultaneous presses, e.g, punch + kick
+   * Check backwards? Check if the last button in the sequence was pressed, and if so, travel backwards in a buffer to see if the whole sequence was pressed
+
  * Axis-simulating gamepad button binds (like keyboard axis)
  * Proper documentation
  * Allow detecting "any" gamepad/keyboard key (for "press any key")
- * Allow complex sequence bindings with timing constraints (hadouken, etc)
  * More profiling and testing performance/bottlenecks/memory allocations (http://www.html5rocks.com/en/tutorials/webperformance/usertiming/)
  * Better demos
  * Expose recent device
@@ -118,3 +121,4 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Allow key combinations (modifiers)?
  * Add a fast path for gamepad status checking?
  * Something for "duration" of an action? so the player can do stronger/longer jumps, etc
+ * Ways to clear/remove actions
