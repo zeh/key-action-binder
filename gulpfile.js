@@ -26,12 +26,12 @@ gulp.task('build', function() {
 	return gulp.src('src/core/KeyActionBinder.ts')
 		.pipe(sourcemaps.init())
 		.pipe(ts({
-			declarationFiles: true,
+			declarationFiles: false,
 			noExternalResolve: false,
 			removeComments: false,
 			target: "es5",
 			module: "amd",
-			noImplicitAny: false,
+			noImplicitAny: true,
 			out: "key-action-binder.js",
 		}))
 		.pipe(sourcemaps.write())
