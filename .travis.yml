@@ -4,5 +4,5 @@ node_js:
 install:
   - "npm install -g typescript"
 script:
-  - "tsc ./src/core/KeyActionBinder.ts -t es5"
+  - "tsc ./src/core/KeyActionBinder.ts -t es5 -noImplicitAny -module amd"
 #script: gulp test --verbose --force
