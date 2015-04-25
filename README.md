@@ -117,8 +117,10 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
  * Better demos
  * Expose recent device
  * Check navigator.getGamepads to see if gamepads are actually accessible without breaking
- * Automated tests
+ * Automated tests (tsUnit?)
+ * Adopt some CI service (https://ci.testling.com/guide/quick_start) (https://ci.testling.com/zeh/key-action-binder.ts) (https://travis-ci.org/) (http://stackoverflow.com/questions/13412211/using-travis-ci-for-client-side-javascript-libraries) (https://coveralls.io/)
  * Allow key combinations (modifiers)?
  * Add a fast path for gamepad status checking?
  * Something for "duration" of an action? so the player can do stronger/longer jumps, etc
  * Ways to clear/remove actions
+ * Use LET instead of vars
