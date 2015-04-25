@@ -102,7 +102,7 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
 
 ## To-do
 
- * Test:
+ * To test/investigate:
    * support for 2+ controllers
    * Actions bound to several different keys/gamepad buttons at the same time
    * If maintainPlayerPositions is necessary
@@ -111,18 +111,24 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
    * Certain commands in the sequence should be interchangeable (http://wiki.shoryuken.com/The_King_of_Fighters_XIII/Game_Elements/Command_Interpreter)
    * Leniency for simultaneous presses, e.g, punch + kick
    * Check backwards? Check if the last button in the sequence was pressed, and if so, travel backwards in a buffer to see if the whole sequence was pressed
+ 
+ * Testing/CI
+   * Determine better testing strategy (TS side with tsUnit, or JS side with QUnit/Mocha/etc (more likely))
+   * Implement automated tests via command-line/gulp task (http://stackoverflow.com/questions/13412211/using-travis-ci-for-client-side-javascript-libraries) and a headless browser?
+   * Add test to travis build script?
+   * Add compatibility tests too, to determine Gamepad support via a widget (https://ci.testling.com/zeh/key-action-binder.ts)
+   * Use coveralls (https://coveralls.io/) to determine % of the code that is test-covered?
 
- * Axis-simulating gamepad button binds (like keyboard axis)
- * Proper documentation
- * Allow detecting "any" gamepad/keyboard key (for "press any key")
- * More profiling and testing performance/bottlenecks/memory allocations (http://www.html5rocks.com/en/tutorials/webperformance/usertiming/)
- * Better demos
- * Expose recent device
- * Check navigator.getGamepads to see if gamepads are actually accessible without breaking
- * Automated tests (tsUnit?)
- * Adopt some CI service (https://ci.testling.com/guide/quick_start) (https://ci.testling.com/zeh/key-action-binder.ts) (https://travis-ci.org/) (http://stackoverflow.com/questions/13412211/using-travis-ci-for-client-side-javascript-libraries) (https://coveralls.io/)
- * Allow key combinations (modifiers)?
- * Add a fast path for gamepad status checking?
- * Something for "duration" of an action? so the player can do stronger/longer jumps, etc
- * Ways to clear/remove actions
- * Use LET instead of vars
+ * Other
+   * Axis-simulating gamepad button binds (like keyboard axis)
+   * Proper documentation, pages
+   * Allow detecting "any" gamepad/keyboard key (for "press any key")
+   * More profiling and testing performance/bottlenecks/memory allocations (http://www.html5rocks.com/en/tutorials/webperformance/usertiming/)
+   * Better demos
+   * Expose recent device
+   * Check navigator.getGamepads to see if gamepads are actually accessible without breaking the code
+   * Allow key combinations (modifiers)?
+   * Add a fast path for gamepad status checking?
+   * Something for "duration" of an action? so the player can do stronger/longer jumps, etc
+   * Ways to clear/remove actions
+   * Use LET instead of vars
