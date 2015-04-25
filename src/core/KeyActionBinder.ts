@@ -166,11 +166,11 @@ class KeyActionBinder {
 	private actions:{ [index:string]:KAB.Action };													// All added actions, as a dictionary
 	private axes:{ [index:string]:KAB.Axis };														// All added axis, as a dictionary
 
-	private _onActionActivated:zehfernando.signals.SimpleSignal<{(action:string)}>;					// TODO: properly import modules to avoid using the whole identifier?
-	private _onActionDeactivated:zehfernando.signals.SimpleSignal<{(action:string)}>;
-	private _onActionValueChanged:zehfernando.signals.SimpleSignal<{(action:string, value:number)}>;
-	private _onDevicesChanged:zehfernando.signals.SimpleSignal<{()}>;
-	private _onRecentDeviceChanged:zehfernando.signals.SimpleSignal<{(gamepad:Gamepad)}>; // TODO: use a Gamepad wrapper?
+	private _onActionActivated:zehfernando.signals.SimpleSignal<(action:string) => void>;			// TODO: properly import modules to avoid using the whole identifier?
+	private _onActionDeactivated:zehfernando.signals.SimpleSignal<(action:string) => void>;
+	private _onActionValueChanged:zehfernando.signals.SimpleSignal<(action:string, value:number) => void>;
+	private _onDevicesChanged:zehfernando.signals.SimpleSignal<() => void>;
+	private _onRecentDeviceChanged:zehfernando.signals.SimpleSignal<(gamepad:Gamepad) => void>; // TODO: use a Gamepad wrapper?
 
 	private bindCache:any;																			// Should have been "{ [index: Function]: Function }", but that's not allowed.. maybe create a separate class later
 
@@ -189,11 +189,11 @@ class KeyActionBinder {
 		this.actions = {};
 		this.axes = {};
 
-		this._onActionActivated = new zehfernando.signals.SimpleSignal<{(action:string)}>();
-		this._onActionDeactivated = new zehfernando.signals.SimpleSignal<{(action:string)}>();
-		this._onActionValueChanged = new zehfernando.signals.SimpleSignal<{(action:string, value:number)}>();
-		this._onDevicesChanged = new zehfernando.signals.SimpleSignal<{()}>();
-		this._onRecentDeviceChanged = new zehfernando.signals.SimpleSignal<{(gamepad:Gamepad)}>();
+		this._onActionActivated = new zehfernando.signals.SimpleSignal<(action:string) => void>();
+		this._onActionDeactivated = new zehfernando.signals.SimpleSignal<(action:string) => void>();
+		this._onActionValueChanged = new zehfernando.signals.SimpleSignal<(action:string, value:number) => void>();
+		this._onDevicesChanged = new zehfernando.signals.SimpleSignal<() => void>();
+		this._onRecentDeviceChanged = new zehfernando.signals.SimpleSignal<(gamepad:Gamepad) => void>();
 
 		this.currentFrame = 0;
 		this.lastFrameGamepadsChecked = 0;
