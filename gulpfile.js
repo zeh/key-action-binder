@@ -6,6 +6,12 @@ var concat = require('gulp-concat');
 var sourcemaps = require('gulp-sourcemaps');
 var runSequence = require('run-sequence');
 var sloc = require('gulp-sloc');
+var header = require('gulp-header');
+
+// Options
+var options = {
+	header: "// Auto-generated file - do not modify!\n"
+};
 
 // Catching errors is necessary because otherwise it causes watch to stop (and the default error handling doesn't show any information about the error)
 function logError(error) {
@@ -34,6 +40,7 @@ gulp.task('build', function() {
 			noImplicitAny: true,
 			out: "key-action-binder.js",
 		}))
+		.pipe(header(options.header))
 		.pipe(sourcemaps.write())
 		.pipe(gulp.dest('build'));
 });
@@ -42,6 +49,7 @@ gulp.task('minify', function () {
 	return gulp.src('build/key-action-binder.js')
 		.pipe(concat('key-action-binder.min.js'))
 		.pipe(uglify()).on('error', logError)
+		.pipe(header(options.header))
 		.pipe(gulp.dest('build'));
 });
 

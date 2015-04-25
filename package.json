@@ -12,6 +12,7 @@
     "del": "^1.1.1",
     "gulp": "^3.8.11",
     "gulp-concat": "^2.5.2",
+    "gulp-header": "^1.2.2",
     "gulp-sloc": "^1.0.4",
     "gulp-sourcemaps": "^1.5.1",
     "gulp-typescript": "^2.6.0",
