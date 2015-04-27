@@ -23,10 +23,10 @@
   "testling": {
     "files": "tests/support.js",
     "browsers": [
-      "ie/6..latest",
+      "ie/7..latest",
       "chrome/22..latest",
       "firefox/16..latest",
-      "safari/latest",
+      "safari/5..latest",
       "opera/11.0..latest",
       "iphone/6",
       "ipad/6",
