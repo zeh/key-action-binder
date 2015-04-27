@@ -20,19 +20,6 @@
     "run-sequence": "^1.0.2",
     "tape": "^4.0.0"
   },
-  "testling": {
-    "files": "tests/support.js",
-    "browsers": [
-      "ie/7..latest",
-      "chrome/22..latest",
-      "firefox/16..latest",
-      "safari/5..latest",
-      "opera/11.0..latest",
-      "iphone/6",
-      "ipad/6",
-      "android-browser/latest"
-    ]
-  },
   "scripts": {
     "test": "tape tests/support.js"
   }
