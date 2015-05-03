@@ -7,6 +7,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var runSequence = require('run-sequence');
 var sloc = require('gulp-sloc');
 var header = require('gulp-header');
+var webserver = require('gulp-webserver');
 
 // Options
 var options = {
@@ -22,6 +23,15 @@ function logError(error) {
 gulp.task('stats', function (cb) {
 	gulp.src(['build/key-action-binder.js'])
 		.pipe(sloc());
+});
+
+gulp.task('webserver', function (cb) {
+	gulp.src('.')
+	.pipe(webserver({
+		livereload: true,
+		directoryListing: true,
+		open: true
+	}));
 });
 
 gulp.task('clean', function (cb) {
