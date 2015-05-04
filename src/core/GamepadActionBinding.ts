@@ -28,7 +28,7 @@ module KAB {
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
 		public matchesGamepadButton(buttonCode:number, gamepadLocation:number):boolean {
-			return (this.buttonCode == buttonCode || this.buttonCode == KeyActionBinder.GamepadButtons.ANY) && (this.gamepadLocation == gamepadLocation || this.gamepadLocation == KeyActionBinder.GamepadLocations.ANY);
+			return (this.buttonCode == buttonCode || this.buttonCode == KeyActionBinder.GamepadButtons.ANY.index) && (this.gamepadLocation == gamepadLocation || this.gamepadLocation == KeyActionBinder.GamepadLocations.ANY);
 		}
 	}
 }

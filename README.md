@@ -32,23 +32,23 @@ Create an instance:
 Setup actions with as many bindings as you want:
 
 	// Simple binding, keyboard
-	binder.action("move-left").bindKeyboard(KeyActionBinder.KeyCodes.LEFT);
-	binder.action("move-right").bindKeyboard(KeyActionBinder.KeyCodes.RIGHT);
+	binder.action("move-left").bind(KeyActionBinder.KeyCodes.LEFT);
+	binder.action("move-right").bind(KeyActionBinder.KeyCodes.RIGHT);
 	
 	// Simple binding, gamepad
-	binder.action("move-left").bindGamepad(KeyActionBinder.GamepadButtons.DPAD_LEFT);
-	binder.action("move-right").bindGamepad(KeyActionBinder.GamepadButtons.DPAD_RIGHT);
+	binder.action("move-left").bind(KeyActionBinder.GamepadButtons.DPAD_LEFT);
+	binder.action("move-right").bind(KeyActionBinder.GamepadButtons.DPAD_RIGHT);
 
-	// Actions can be chained for simpler use
+	// Actions can be chained for easier use
 	binder.action("fire")
-		.bindKeyboard(KeyActionBinder.KeyCodes.ENTER)
-		.bindGamepad(KeyActionBinder.GamepadButtons.ACTION_LEFT);
+		.bind(KeyActionBinder.KeyCodes.ENTER)
+		.bind(KeyActionBinder.GamepadButtons.ACTION_LEFT);
 
 Some actions can have a tolerance time (in seconds), so when checking if an action is active, it also checks if it has just been pressed:
 
 	binder.action("jump")
-		.bindKeyboard(KeyActionBinder.KeyCodes.SPACE)
-		.bindGamepad(KeyActionBinder.GamepadButtons.ACTION_DOWN)
+		.bind(KeyActionBinder.KeyCodes.SPACE)
+		.bind(KeyActionBinder.GamepadButtons.ACTION_DOWN)
 		.setTolerance(0.05); // To prevent a player from hitting the jump button while still in the air
 
 Then, evaluate the actions inside your game loop:
@@ -77,8 +77,8 @@ You can also use the axis for movements, including simulating an axis with keybo
 	
 	// You can also use the axis for movement instead:
 	binder.axis("move-x")
-		.bindGamepad(KeyActionBinder.GamepadAxes.STICK_LEFT_X)
-		.bindKeyboard(KeyActionBinder.KeyCodes.LEFT, KeyActionBinder.KeyCodes.RIGHT);
+		.bind(KeyActionBinder.GamepadAxes.STICK_LEFT_X)
+		.bind(KeyActionBinder.KeyCodes.LEFT, KeyActionBinder.KeyCodes.RIGHT);
 		
 	function myGameLoop() {
 		var speedScaleX = binder.axis("move-x").value; // Value will be a number between -1 and 1
@@ -106,8 +106,10 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
    * support for 2+ controllers
    * Actions bound to several different keys/gamepad buttons at the same time
    * If maintainPlayerPositions is necessary
+   * If "any" key is working correctly
 
  * Allow complex sequence bindings with timing constraints (hadouken, etc)
+   * Allow combinations (e.g. A+B)
    * Certain commands in the sequence should be interchangeable (http://wiki.shoryuken.com/The_King_of_Fighters_XIII/Game_Elements/Command_Interpreter)
    * Leniency for simultaneous presses, e.g, punch + kick
    * Check backwards? Check if the last button in the sequence was pressed, and if so, travel backwards in a buffer to see if the whole sequence was pressed
@@ -120,9 +122,9 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
    * Use coveralls (https://coveralls.io/) to determine % of the code that is test-covered?
 
  * Other
+   * Use an interface for Gamepad Axis/Button parameters?
    * Axis-simulating gamepad button binds (like keyboard axis)
    * Proper documentation, pages
-   * Allow detecting "any" gamepad/keyboard key (for "press any key")
    * More profiling and testing performance/bottlenecks/memory allocations (http://www.html5rocks.com/en/tutorials/webperformance/usertiming/)
    * Better demos
    * Expose recent device
@@ -131,4 +133,5 @@ KeyActionBinder uses the [MIT License](http://choosealicense.com/licenses/mit/).
    * Add a fast path for gamepad status checking?
    * Something for "duration" of an action? so the player can do stronger/longer jumps, etc
    * Ways to clear/remove actions
-   * Use LET instead of vars
+   * Use LET instead of vars?
+   * Use tsconfig.json instead? Wait for TS 1.5.0...

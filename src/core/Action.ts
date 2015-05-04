@@ -47,15 +47,18 @@ module KAB {
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-		public bindKeyboard(keyCode:number = KeyActionBinder.KeyCodes.ANY, keyLocation:number = KeyActionBinder.KeyLocations.ANY):Action {
-			// TODO: check if already present?
-			this.keyboardBindings.push(new KeyboardActionBinding(keyCode, keyLocation));
-			return this;
-		}
-
-		public bindGamepad(buttonCode:number = KeyActionBinder.GamepadButtons.ANY, gamepadLocation:number = KeyActionBinder.GamepadLocations.ANY):Action {
-			// TODO: check if already present?
-			this.gamepadButtonBindings.push(new GamepadActionBinding(buttonCode, gamepadLocation));
+		public bind(keyCode:number):Action;
+		public bind(keyCode:number, keyLocation:number):Action;
+		public bind(button:{index:number}):Action;
+		public bind(button:{index:number}, gamepadLocation:number):Action;
+		public bind(subject:number|{index:number}, location?:number):Action {
+			if (typeof subject === "number") {
+				// Keyboard binding
+				this.bindKeyboard(subject, location == undefined ? KeyActionBinder.KeyLocations.ANY : location);
+			} else {
+				// Gamepad binding
+				this.bindGamepad(subject, location == undefined ? KeyActionBinder.GamepadLocations.ANY : location);
+			}
 			return this;
 		}
 
@@ -149,6 +152,16 @@ module KAB {
 
 		// ================================================================================================================
 		// PRIVATE INTERFACE ----------------------------------------------------------------------------------------------
+
+		private bindKeyboard(keyCode:number, keyLocation:number):void {
+			// TODO: check if already present?
+			this.keyboardBindings.push(new KeyboardActionBinding(keyCode, keyLocation));
+		}
+
+		private bindGamepad(button:{index:number}, gamepadLocation:number):void {
+			// TODO: check if already present?
+			this.gamepadButtonBindings.push(new GamepadActionBinding(button.index, gamepadLocation));
+		}
 
 		public isWithinToleranceTime():boolean {
 			return this.toleranceTime <= 0 || this.timeLastActivation >= Date.now() - this.toleranceTime;

@@ -32,15 +32,20 @@ module KAB {
 		// ================================================================================================================
 		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-		public bindKeyboard(keyCodeA:number, keyCodeB:number, keyLocationA:number = KeyActionBinder.KeyLocations.ANY, keyLocationB:number = KeyActionBinder.KeyLocations.ANY, transitionTimeSeconds:number = 0.15):Axis {
-			// TODO: check if already present?
-			this.keyboardBindings.push(new KeyboardAxisBinding(keyCodeA, keyCodeB, keyLocationA, keyLocationB, transitionTimeSeconds));
-			return this;
-		}
-
-		public bindGamepad(axisCode:number, deadZone:number = 0.2, gamepadLocation:number = KeyActionBinder.GamepadLocations.ANY):Axis {
-			// TODO: check if already present?
-			this.gamepadAxisBindings.push(new GamepadAxisBinding(axisCode, deadZone, gamepadLocation));
+		public bind(keyCodeA:number, keyCodeB:number):Axis;
+		public bind(keyCodeA:number, keyCodeB:number, keyLocationA:number, keyLocationB:number):Axis;
+		public bind(keyCodeA:number, keyCodeB:number, keyLocationA:number, keyLocationB:number, transitionTimeSeconds:number):Axis;
+		public bind(axis:{index:number}):Axis;
+		public bind(axis:{index:number}, deadZone:number):Axis;
+		public bind(axis:{index:number}, deadZone:number, gamepadLocation:number):Axis;
+		public bind(p1:any, p2?:number, p3?:number, p4?:number, p5?:number):Axis {
+			if (typeof p1 === "number") {
+				// Keyboard binding
+				this.bindKeyboard(p1, p2, p3 == undefined ? KeyActionBinder.KeyLocations.ANY : p3, p4 == undefined ? KeyActionBinder.KeyLocations.ANY : p4, p5 == undefined ? 0.15 : p5);
+			} else {
+				// Gamepad binding
+				this.bindGamepad(p1, p2 == undefined ? 0.2 : p2, p3 == undefined ? KeyActionBinder.GamepadLocations.ANY : p3);
+			}
 			return this;
 		}
 
@@ -102,6 +107,20 @@ module KAB {
 			}
 
 			return bestValue;
+		}
+
+
+		// ================================================================================================================
+		// PRIVATE INTERFACE ----------------------------------------------------------------------------------------------
+
+		private bindKeyboard(keyCodeA:number, keyCodeB:number, keyLocationA:number, keyLocationB:number, transitionTimeSeconds:number):void {
+			// TODO: check if already present?
+			this.keyboardBindings.push(new KeyboardAxisBinding(keyCodeA, keyCodeB, keyLocationA, keyLocationB, transitionTimeSeconds));
+		}
+
+		private bindGamepad(axis:{index:number}, deadZone:number, gamepadLocation:number):void {
+			// TODO: check if already present?
+			this.gamepadAxisBindings.push(new GamepadAxisBinding(axis.index, deadZone, gamepadLocation));
 		}
 	}
 }

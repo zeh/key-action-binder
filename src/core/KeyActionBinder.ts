@@ -131,30 +131,30 @@ class KeyActionBinder {
 	};
 
 	public static GamepadButtons = {
-		ANY: 81653815,
-		ACTION_DOWN: 0,
-		ACTION_RIGHT: 1,
-		ACTION_LEFT: 2,
-		ACTION_UP: 3,
-		LEFT_SHOULDER: 4, // Left shoulder button
-		RIGHT_SHOULDER: 5,
-		LEFT_SHOULDER_BOTTOM: 6, // Left Trigger
-		RIGHT_SHOULDER_BOTTOM: 7,
-		SELECT: 8,
-		START: 9,
-		STICK_LEFT_PRESS: 10,
-		STICK_RIGHT_PRESS: 11,
-		DPAD_UP: 12,
-		DPAD_DOWN: 13,
-		DPAD_LEFT: 14,
-		DPAD_RIGHT: 15
+		ANY: {index: 81653815},
+		ACTION_DOWN: {index: 0},
+		ACTION_RIGHT: {index: 1},
+		ACTION_LEFT: {index: 2},
+		ACTION_UP: {index: 3},
+		LEFT_SHOULDER: {index: 4}, // Left shoulder button
+		RIGHT_SHOULDER: {index: 5},
+		LEFT_SHOULDER_BOTTOM: {index: 6}, // Left Trigger
+		RIGHT_SHOULDER_BOTTOM: {index: 7},
+		SELECT: {index: 8},
+		START: {index: 9},
+		STICK_LEFT_PRESS: {index: 10},
+		STICK_RIGHT_PRESS: {index: 11},
+		DPAD_UP: {index: 12},
+		DPAD_DOWN: {index: 13},
+		DPAD_LEFT: {index: 14},
+		DPAD_RIGHT: {index: 15}
 	};
 
 	public static GamepadAxes = {
-		STICK_LEFT_X: 0,
-		STICK_LEFT_Y: 1,
-		STICK_RIGHT_X: 2,
-		STICK_RIGHT_Y: 3
+		STICK_LEFT_X: {index: 0},
+		STICK_LEFT_Y: {index: 1},
+		STICK_RIGHT_X: {index: 2},
+		STICK_RIGHT_Y: {index: 3}
 	}
 
 	// Properties
