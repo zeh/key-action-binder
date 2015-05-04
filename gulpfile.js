@@ -39,6 +39,7 @@ gulp.task('clean', function (cb) {
 });
 
 gulp.task('build', function() {
+	// TODO: use sortOutput:true in the future and move sourcemap generation to the TS parameters (tsconfig too?)
 	return gulp.src('src/core/KeyActionBinder.ts')
 		.pipe(sourcemaps.init())
 		.pipe(ts({
@@ -48,6 +49,8 @@ gulp.task('build', function() {
 			target: "es5",
 			module: "amd",
 			noImplicitAny: true,
+			//sortOutput: true,
+			typescript: require('typescript'),
 			out: "key-action-binder.js",
 		}))
 		.pipe(header(options.header))
