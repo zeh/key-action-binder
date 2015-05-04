@@ -1,4 +1,3 @@
-/// <reference path="./../definitions/gamepad.d.ts" />
 /// <reference path="./../libs/signals/SimpleSignal.ts" />
 /// <reference path="Action.ts" />
 /// <reference path="Axis.ts" />
