@@ -55,4 +55,4 @@ Then, evaluate the actions inside your game loop:
 		}
 	}
 
-Read more about the project in the [https://github.com/zeh/key-action-binder.ts/wiki](wiki).
+Read more about the project in the [wiki](https://github.com/zeh/key-action-binder.ts/wiki).
