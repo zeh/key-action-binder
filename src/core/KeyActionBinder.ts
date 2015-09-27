@@ -1,6 +1,6 @@
-/// <reference path="./../libs/signals/SimpleSignal.ts" />
-/// <reference path="Action.ts" />
-/// <reference path="Axis.ts" />
+import SimpleSignal from './../libs/signals/SimpleSignal';
+import Action from './Action';
+import Axis from './Axis';
 
 /**
  * Provides universal input control for game controllers and keyboard
@@ -8,7 +8,7 @@
  *
  * @author zeh fernando
  */
-class KeyActionBinder {
+export default class KeyActionBinder {
 
 	// Constants
 	public static VERSION:String = "1.0.0";
@@ -162,14 +162,14 @@ class KeyActionBinder {
 	private _recentDevice:Gamepad;																	// The most recent device that sent an event // TODO: properly use this, duh
 
 	// Instances
-	private actions:{ [index:string]:KAB.Action };													// All added actions, as a dictionary
-	private axes:{ [index:string]:KAB.Axis };														// All added axis, as a dictionary
+	private actions:{ [index:string]:Action };													// All added actions, as a dictionary
+	private axes:{ [index:string]:Axis };														// All added axis, as a dictionary
 
-	private _onActionActivated:zehfernando.signals.SimpleSignal<(action:string) => void>;			// TODO: properly import modules to avoid using the whole identifier?
-	private _onActionDeactivated:zehfernando.signals.SimpleSignal<(action:string) => void>;
-	private _onActionValueChanged:zehfernando.signals.SimpleSignal<(action:string, value:number) => void>;
-	private _onDevicesChanged:zehfernando.signals.SimpleSignal<() => void>;
-	private _onRecentDeviceChanged:zehfernando.signals.SimpleSignal<(gamepad:Gamepad) => void>; // TODO: use a Gamepad wrapper?
+	private _onActionActivated:SimpleSignal<(action:string) => void>;			// TODO: properly import modules to avoid using the whole identifier?
+	private _onActionDeactivated:SimpleSignal<(action:string) => void>;
+	private _onActionValueChanged:SimpleSignal<(action:string, value:number) => void>;
+	private _onDevicesChanged:SimpleSignal<() => void>;
+	private _onRecentDeviceChanged:SimpleSignal<(gamepad:Gamepad) => void>; // TODO: use a Gamepad wrapper?
 
 	private bindCache:any;																			// Should have been "{ [index: Function]: Function }", but that's not allowed.. maybe create a separate class later
 
@@ -188,11 +188,11 @@ class KeyActionBinder {
 		this.actions = {};
 		this.axes = {};
 
-		this._onActionActivated = new zehfernando.signals.SimpleSignal<(action:string) => void>();
-		this._onActionDeactivated = new zehfernando.signals.SimpleSignal<(action:string) => void>();
-		this._onActionValueChanged = new zehfernando.signals.SimpleSignal<(action:string, value:number) => void>();
-		this._onDevicesChanged = new zehfernando.signals.SimpleSignal<() => void>();
-		this._onRecentDeviceChanged = new zehfernando.signals.SimpleSignal<(gamepad:Gamepad) => void>();
+		this._onActionActivated = new SimpleSignal<(action:string) => void>();
+		this._onActionDeactivated = new SimpleSignal<(action:string) => void>();
+		this._onActionValueChanged = new SimpleSignal<(action:string, value:number) => void>();
+		this._onDevicesChanged = new SimpleSignal<() => void>();
+		this._onRecentDeviceChanged = new SimpleSignal<(gamepad:Gamepad) => void>();
 
 		this.currentFrame = 0;
 		this.lastFrameGamepadsChecked = 0;
@@ -264,12 +264,12 @@ class KeyActionBinder {
 	/**
 	 * Gets an action instance, creating it if necessary
 	 */
-	public action(id:string):KAB.Action {
+	public action(id:string):Action {
 		// Check gamepad state
 		if (this.lastFrameGamepadsChecked < this.currentFrame) this.updateGamepadsState();
 
 		// Create Action first if needed
-		if (!this.actions.hasOwnProperty(id)) this.actions[id] = new KAB.Action(id);
+		if (!this.actions.hasOwnProperty(id)) this.actions[id] = new Action(id);
 
 		return this.actions[id];
 	}
@@ -277,12 +277,12 @@ class KeyActionBinder {
 	/**
 	 * Gets an axis instance, creating it if necessary
 	 */
-	public axis(id:string):KAB.Axis {
+	public axis(id:string):Axis {
 		// Check gamepad state
 		if (this.lastFrameGamepadsChecked < this.currentFrame) this.updateGamepadsState();
 
 		// Create Axis first if needed
-		if (!this.axes.hasOwnProperty(id)) this.axes[id] = new KAB.Axis(id);
+		if (!this.axes.hasOwnProperty(id)) this.axes[id] = new Axis(id);
 
 		return this.axes[id];
 	}
@@ -364,9 +364,9 @@ class KeyActionBinder {
 		var gamepads = navigator.getGamepads();
 		var gamepad:Gamepad;
 		var i:number, j:number, l:number;
-		var action:KAB.Action;
+		var action:Action;
 		var buttons:GamepadButton[];
-		var axis:KAB.Axis;
+		var axis:Axis;
 		var axes:number[];
 
 		// For all gamepads...
@@ -425,3 +425,6 @@ class KeyActionBinder {
 		return this.bindCache[func];
 	}
 }
+
+// Create a global object with the class - only used in the single file version, replaced at build time
+// #IFDEF ES5SINGLE // window["KeyActionBinder"] = KeyActionBinder;

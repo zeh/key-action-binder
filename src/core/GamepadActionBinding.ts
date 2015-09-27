@@ -1,34 +1,32 @@
-﻿/// <reference path="KeyActionBinder.ts" />
+﻿import KeyActionBinder from './KeyActionBinder';
 
-module KAB {
-	/**
-	 * Information on a gamepad event filter
-	 */
-	export class GamepadActionBinding {
+/**
+ * Information on a gamepad event filter
+ */
+export default class GamepadActionBinding {
 
-		// Properties
-		public buttonCode:number;
-		public gamepadLocation:number;
+	// Properties
+	public buttonCode:number;
+	public gamepadLocation:number;
 
-		public isActivated:boolean;
-		public value:number;
+	public isActivated:boolean;
+	public value:number;
 
 
-		// ================================================================================================================
-		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
+	// ================================================================================================================
+	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
-		constructor(buttonCode:number, gamepadLocation:number) {
-			this.buttonCode = buttonCode;
-			this.gamepadLocation = gamepadLocation;
-			this.isActivated = false;
-			this.value = 0;
-		}
+	constructor(buttonCode:number, gamepadLocation:number) {
+		this.buttonCode = buttonCode;
+		this.gamepadLocation = gamepadLocation;
+		this.isActivated = false;
+		this.value = 0;
+	}
 
-		// ================================================================================================================
-		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
+	// ================================================================================================================
+	// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
 
-		public matchesGamepadButton(buttonCode:number, gamepadLocation:number):boolean {
-			return (this.buttonCode == buttonCode || this.buttonCode == KeyActionBinder.GamepadButtons.ANY.index) && (this.gamepadLocation == gamepadLocation || this.gamepadLocation == KeyActionBinder.GamepadLocations.ANY);
-		}
+	public matchesGamepadButton(buttonCode:number, gamepadLocation:number):boolean {
+		return (this.buttonCode == buttonCode || this.buttonCode == KeyActionBinder.GamepadButtons.ANY.index) && (this.gamepadLocation == gamepadLocation || this.gamepadLocation == KeyActionBinder.GamepadLocations.ANY);
 	}
 }

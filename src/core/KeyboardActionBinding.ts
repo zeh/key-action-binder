@@ -1,33 +1,31 @@
-﻿/// <reference path="KeyActionBinder.ts" />
+﻿import KeyActionBinder from './KeyActionBinder';
 
-module KAB {
-	/**
-	 * Information on a keyboard event filter
-	 */
-	export class KeyboardActionBinding {
+/**
+ * Information on a keyboard event filter
+ */
+export default class KeyboardActionBinding {
 
-		// Properties
-		public keyCode:number;
-		public keyLocation:number;
+	// Properties
+	public keyCode:number;
+	public keyLocation:number;
 
-		public isActivated:boolean;
-
-
-		// ================================================================================================================
-		// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
-
-		constructor(keyCode:number, keyLocation:number) {
-			this.keyCode = keyCode;
-			this.keyLocation = keyLocation;
-			this.isActivated = false;
-		}
+	public isActivated:boolean;
 
 
-		// ================================================================================================================
-		// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
+	// ================================================================================================================
+	// CONSTRUCTOR ----------------------------------------------------------------------------------------------------
 
-		public matchesKeyboardKey(keyCode:number, keyLocation:number):boolean {
-			return (this.keyCode == keyCode || this.keyCode == KeyActionBinder.KeyCodes.ANY) && (this.keyLocation == keyLocation || this.keyLocation == KeyActionBinder.KeyLocations.ANY);
-		}
+	constructor(keyCode:number, keyLocation:number) {
+		this.keyCode = keyCode;
+		this.keyLocation = keyLocation;
+		this.isActivated = false;
+	}
+
+
+	// ================================================================================================================
+	// PUBLIC INTERFACE -----------------------------------------------------------------------------------------------
+
+	public matchesKeyboardKey(keyCode:number, keyLocation:number):boolean {
+		return (this.keyCode == keyCode || this.keyCode == KeyActionBinder.KeyCodes.ANY) && (this.keyLocation == keyLocation || this.keyLocation == KeyActionBinder.KeyLocations.ANY);
 	}
 }
